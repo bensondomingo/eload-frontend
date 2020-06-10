@@ -5,7 +5,11 @@ module.exports = {
   outputDir: './dist/',
   transpileDependencies: ['vuetify'],
 
-  chainWebpack: (config) => {
+  configureWebpack: {
+    devtool: 'source-map'
+  },
+
+  chainWebpack: config => {
     config
       .plugin('BundleTracker')
       .use(BundleTracker, [{ filename: './webpack-stats.json' }]);
@@ -26,7 +30,7 @@ module.exports = {
       .https(false)
       .disableHostCheck(true)
       .headers({ 'Access-Control-Allow-Origin': ['*'] });
-  },
+  }
 
   // uncomment before executing 'npm run build'
   // css: {
