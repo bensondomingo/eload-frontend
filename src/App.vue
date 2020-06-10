@@ -2,7 +2,9 @@
   <v-app>
     <Navbar />
     <v-content background="#cbf3f0">
+      <v-container>
       <router-view></router-view>
+      </v-container>
     </v-content>
   </v-app>
 </template>

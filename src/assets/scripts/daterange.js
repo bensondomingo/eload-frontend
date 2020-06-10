@@ -6,6 +6,14 @@ class DateRange {
     this.dateEnd = new Date();
     this.queryObject = {};
   }
+
+  get rangeStr() {
+    if (this.dateEnd.getTime() - this.dateStart.getTime() === 0) {
+      return this.dateStart.toLocaleDateString();
+    } else {
+      return `${this.dateStart.toLocaleDateString()} - ${this.dateEnd.toLocaleDateString()}`;
+    }
+  }
 }
 
 class Today extends DateRange {
@@ -108,7 +116,7 @@ class CustomRange extends DateRange {
   }
 }
 
-const dateRange = [
+const dateRangeList = [
   new Today(),
   new Yesterday(),
   new ThisWeek(),
@@ -118,4 +126,4 @@ const dateRange = [
   new CustomRange()
 ];
 
-export { dateRange };
+export { dateRangeList };

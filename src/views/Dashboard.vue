@@ -1,77 +1,76 @@
 <template>
   <div class="dashboard">
-    <v-container>
-      <v-row dense>
-        <!-- Select Range -->
-        <v-col class="d-flex" cols="12">
-          <v-select
-            outlined
-            dense
-            v-model="selectedRange"
-            item-text="name"
-            :items="selectRangeOptions"
-            label="Date Range"
-            color="#044762"
-            :messages="rangeSelectorMsg"
-            @input="onSelectRange"
-            autofocus
-          ></v-select>
-        </v-col>
-        <!-- Custom range picker -->
-        <div class="text-center">
-          <v-dialog v-model="showRangePicker" width="500">
-            <v-stepper v-model="customRangeStep">
-              <v-stepper-header>
-                <v-stepper-step editable :complete="customRangeStep > 1" step="1">Start</v-stepper-step>
-                <v-divider></v-divider>
-                <v-stepper-step :complete="customRangeStep > 2" step="2">End</v-stepper-step>
-              </v-stepper-header>
+    <v-row dense>
+      <!-- Select Range -->
+      <v-col class="d-flex" cols="12">
+        <v-select
+          outlined
+          dense
+          v-model="selectedRange"
+          item-text="name"
+          :items="selectRangeOptions"
+          label="Date Range"
+          color="#044762"
+          :messages="rangeSelectorMsg"
+          @input="onSelectRange"
+          autofocus
+        ></v-select>
+      </v-col>
+      <!-- Custom range picker -->
+      <div class="text-center">
+        <v-dialog v-model="showRangePicker" width="500">
+          <v-stepper v-model="customRangeStep">
+            <v-stepper-header>
+              <v-stepper-step editable :complete="customRangeStep > 1" step="1">Start</v-stepper-step>
+              <v-divider></v-divider>
+              <v-stepper-step :complete="customRangeStep > 2" step="2">End</v-stepper-step>
+            </v-stepper-header>
 
-              <v-stepper-items>
-                <v-stepper-content step="1">
-                  <v-date-picker
-                    v-model="customRangeStart"
-                    @input="customRangeStep = 2"
-                    full-width
-                    no-title
-                  ></v-date-picker>
-                </v-stepper-content>
+            <v-stepper-items>
+              <v-stepper-content step="1">
+                <v-date-picker
+                  v-model="customRangeStart"
+                  @input="customRangeStep = 2"
+                  full-width
+                  no-title
+                ></v-date-picker>
+              </v-stepper-content>
 
-                <v-stepper-content step="2">
-                  <div class="d-flex flex-column"></div>
-                  <v-date-picker v-model="customRangeEnd" full-width no-title></v-date-picker>
-                  <v-btn color="primary" @click="onApplyCustomRange">Apply</v-btn>
-                  <v-btn text @click="customRangeStep = 1">Back</v-btn>
-                </v-stepper-content>
-              </v-stepper-items>
-            </v-stepper>
-          </v-dialog>
-        </div>
-      </v-row>
-      <!-- Cards -->
-      <Salecard
-        ref="saleCards"
-        v-for="cardData in cardObjects"
-        :key="cardData.ref"
-        :cardData="cardData"
-        :amount="Object.keys(summary).length != 0 ? summary[cardData.ref] : 0"
-      />
-    </v-container>
+              <v-stepper-content step="2">
+                <div class="d-flex flex-column"></div>
+                <v-date-picker v-model="customRangeEnd" full-width no-title></v-date-picker>
+                <v-btn color="primary" @click="onApplyCustomRange">Apply</v-btn>
+                <v-btn text @click="customRangeStep = 1">Back</v-btn>
+              </v-stepper-content>
+            </v-stepper-items>
+          </v-stepper>
+        </v-dialog>
+      </div>
+    </v-row>
+    <!-- Sale cards -->
+    <v-row dense>
+      <v-col v-for="cardData in cardObjects" :key="cardData.ref" cols="12" sm="6" md="3">
+        <Salecard
+          ref="saleCards"
+          :key="cardData.ref"
+          :cardData="cardData"
+          :amount="Object.keys(summary).length != 0 ? summary[cardData.ref] : 0"
+        />
+      </v-col>
+    </v-row>
   </div>
 </template>
 
 <script>
-import { axios } from '@/assets/api.service.js';
+import { axios } from '@/assets/scripts/api.service.js';
 import Salecard from '@/components/Salecard';
-import { SaleCardObject } from '@/assets/modules.js';
-import { dateRange } from '@/assets/helpers/daterange.js';
+import { SaleCardObject } from '@/assets/scripts/salecard.js';
+import { dateRangeList } from '@/assets/scripts/daterange.js';
 
 const balanceCard = new SaleCardObject('balance', 'Running Balance', '#05668d');
 const salesCard = new SaleCardObject('sales', 'Total Sales', '#028090');
 const rebatesCard = new SaleCardObject('rebates', 'Rabates', '#00a896');
 const topUpsCard = new SaleCardObject('topUps', 'Top-ups', '#02c39a');
-
-const dateRangeOptions = dateRange;
 
 export default {
   name: 'Dashboard',
@@ -83,7 +82,7 @@ export default {
         localStorage.getItem('range') &&
         localStorage.getItem('range') !== 'undefined'
           ? localStorage.getItem('range')
-          : dateRangeOptions[0].name,
+          : dateRangeList[0].name,
       showRangePicker: false,
       customRangeStep: 1,
       customRangeStart:
@@ -97,9 +96,8 @@ export default {
           ? localStorage.getItem('customRangeEnd')
           : new Date().toISOString().substr(0, 10),
       transactions: [],
-      dummyCard: balanceCard,
       cardObjects: [balanceCard, salesCard, rebatesCard, topUpsCard],
-      selectRangeOptions: dateRangeOptions
+      selectRangeOptions: dateRangeList
     };
   },
 
@@ -113,14 +111,19 @@ export default {
     },
 
     rangeSelectorMsg() {
-      if (this.selectedRange !== 'Custom Range') {
-        return '';
-      }
-      return (
-        this.customDateRange.dateStart.toLocaleDateString() +
-        '-' +
-        this.customDateRange.dateEnd.toLocaleDateString()
+      // if (this.selectedRange !== 'Custom Range') {
+      //   return '';
+      // }
+      // return (
+      //   this.customDateRange.dateStart.toLocaleDateString() +
+      //   '-' +
+      //   this.customDateRange.dateEnd.toLocaleDateString()
+      // );
+
+      const selectedRange = this.selectRangeOptions.find(
+        el => el.name === this.selectedRange
       );
+      return selectedRange.rangeStr;
     },
 
     summary() {
