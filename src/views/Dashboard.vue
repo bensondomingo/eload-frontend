@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard">
+    <!-- Range selector -->
     <v-row dense>
-      <!-- Select Range -->
       <v-col class="d-flex" cols="12">
         <v-select
           outlined
@@ -17,36 +17,9 @@
         ></v-select>
       </v-col>
       <!-- Custom range picker -->
-      <div class="text-center">
-        <v-dialog v-model="showRangePicker" width="500">
-          <v-stepper v-model="customRangeStep">
-            <v-stepper-header>
-              <v-stepper-step editable :complete="customRangeStep > 1" step="1">Start</v-stepper-step>
-              <v-divider></v-divider>
-              <v-stepper-step :complete="customRangeStep > 2" step="2">End</v-stepper-step>
-            </v-stepper-header>
-
-            <v-stepper-items>
-              <v-stepper-content step="1">
-                <v-date-picker
-                  v-model="customRangeStart"
-                  @input="customRangeStep = 2"
-                  full-width
-                  no-title
-                ></v-date-picker>
-              </v-stepper-content>
-
-              <v-stepper-content step="2">
-                <div class="d-flex flex-column"></div>
-                <v-date-picker v-model="customRangeEnd" full-width no-title></v-date-picker>
-                <v-btn color="primary" @click="onApplyCustomRange">Apply</v-btn>
-                <v-btn text @click="customRangeStep = 1">Back</v-btn>
-              </v-stepper-content>
-            </v-stepper-items>
-          </v-stepper>
-        </v-dialog>
-      </div>
+      <CustomRangePicker ref="customRangePicker" @onApplyCustomRange="onApplyCustomRange" />
     </v-row>
+
     <!-- Sale cards -->
     <v-row dense>
       <v-col v-for="cardData in cardObjects" :key="cardData.ref" cols="12" sm="6" md="3">
@@ -64,6 +37,7 @@
 <script>
 import { axios } from '@/assets/scripts/api.service.js';
 import Salecard from '@/components/Salecard';
+import CustomRangePicker from '@/components/CustomRangePicker';
 import { SaleCardObject } from '@/assets/scripts/salecard.js';
 import { dateRangeList } from '@/assets/scripts/daterange.js';
 
@@ -74,7 +48,7 @@ const topUpsCard = new SaleCardObject('topUps', 'Top-ups', '#02c39a');
 
 export default {
   name: 'Dashboard',
-  components: { Salecard },
+  components: { Salecard, CustomRangePicker },
 
   data() {
     return {
@@ -83,18 +57,6 @@ export default {
         localStorage.getItem('range') !== 'undefined'
           ? localStorage.getItem('range')
           : dateRangeList[0].name,
-      showRangePicker: false,
-      customRangeStep: 1,
-      customRangeStart:
-        localStorage.getItem('customRangeStart') &&
-        localStorage.getItem('customRangeStart') !== 'undefined'
-          ? localStorage.getItem('customRangeStart')
-          : new Date().toISOString().substr(0, 10),
-      customRangeEnd:
-        localStorage.getItem('customRangeEnd') &&
-        localStorage.getItem('customRangeEnd') !== 'undefined'
-          ? localStorage.getItem('customRangeEnd')
-          : new Date().toISOString().substr(0, 10),
       transactions: [],
       cardObjects: [balanceCard, salesCard, rebatesCard, topUpsCard],
       selectRangeOptions: dateRangeList
@@ -102,24 +64,7 @@ export default {
   },
 
   computed: {
-    customDateRange() {
-      // Just convert the date string to Date object
-      return {
-        dateStart: new Date(this.customRangeStart),
-        dateEnd: new Date(this.customRangeEnd)
-      };
-    },
-
     rangeSelectorMsg() {
-      // if (this.selectedRange !== 'Custom Range') {
-      //   return '';
-      // }
-      // return (
-      //   this.customDateRange.dateStart.toLocaleDateString() +
-      //   '-' +
-      //   this.customDateRange.dateEnd.toLocaleDateString()
-      // );
-
       const selectedRange = this.selectRangeOptions.find(
         el => el.name === this.selectedRange
       );
@@ -204,16 +149,12 @@ export default {
       this.setCardLoadingEffect(false);
     },
 
-    onApplyCustomRange() {
-      this.customRangeStep = 1;
-      this.showRangePicker = false;
-      localStorage.setItem('customRangeStart', this.customRangeStart);
-      localStorage.setItem('customRangeEnd', this.customRangeEnd);
+    onApplyCustomRange(range) {
       const customRange = this.selectRangeOptions.find(
         el => el.name === 'Custom Range'
       );
-      customRange.dateStart = this.customDateRange.dateStart;
-      customRange.dateEnd = this.customDateRange.dateEnd;
+      customRange.dateStart = range.start;
+      customRange.dateEnd = range.end;
       customRange.updateQueryObject();
       this.onSelectRange(null);
     },
@@ -224,21 +165,21 @@ export default {
         el => el.name === this.selectedRange
       );
 
-      if (selected === null) {
-        // For page reloads or explicit calls
-        if (this.selectedRange === 'Custom Range') {
-          range.dateStart = this.customDateRange.dateStart;
-          range.dateEnd = this.customDateRange.dateEnd;
-          range.updateQueryObject();
-        }
-      } else {
+      if (this.selectedRange === selected) {
         localStorage.setItem('range', selected);
         if (selected === 'Custom Range') {
           // Allow user to set range
-          this.showRangePicker = true;
+          this.$refs.customRangePicker.showRangePicker = true;
           return;
         }
+      } else {
+        if (this.selectedRange === 'Custom Range') {
+          range.dateStart = this.$refs.customRangePicker.customDateRange.start;
+          range.dateEnd = this.$refs.customRangePicker.customDateRange.end;
+          range.updateQueryObject();
+        }
       }
+
       let queryObject = range.queryObject;
       this.setCardLoadingEffect('white');
       try {

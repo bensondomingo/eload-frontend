@@ -12,18 +12,39 @@
           <v-stepper-content step="1">
             <v-date-picker
               v-model="customRangeStart"
-              @input="customRangeStep = 2"
               full-width
               no-title
-            ></v-date-picker>
+              show-current="false"
+              @input="chipColorStart = 'success'"
+            >
+              <v-btn class="flex-grow-1" color="primary" @click="customRangeStep = 2">Next</v-btn>
+              <v-btn class="flex-grow-1" text @click="showRangePicker = false">Cancel</v-btn>
+            </v-date-picker>
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <div class="d-flex flex-column"></div>
-            <v-date-picker v-model="customRangeEnd" full-width no-title></v-date-picker>
-            <v-btn color="primary" @click="onApplyCustomRange">Apply</v-btn>
-            <v-btn text @click="customRangeStep = 1">Back</v-btn>
+            <v-date-picker
+              v-model="customRangeEnd"
+              full-width
+              no-title
+              show-current="false"
+              @input="chipColorEnd = 'success'"
+            >
+              <v-btn class="flex-grow-1" color="primary" @click="onApplyCustomRange">Apply</v-btn>
+              <v-btn class="flex-grow-1" text @click="customRangeStep = 1">Back</v-btn>
+            </v-date-picker>
           </v-stepper-content>
+
+          <div class="d-flex justify-space-around align-center pb-3">
+            <v-chip
+              class="flew-grow-1"
+              :color="chipColorStart"
+            >{{ new Date(customRangeStart).toLocaleDateString() }}</v-chip>
+            <v-chip
+              class="flew-grow-1"
+              :color="chipColorEnd"
+            >{{ new Date(customRangeEnd).toLocaleDateString() }}</v-chip>
+          </div>
         </v-stepper-items>
       </v-stepper>
     </v-dialog>
@@ -33,22 +54,45 @@
 <script>
 export default {
   name: 'CustomRangePicker',
-  
-  date() {
-    return {
-      showRangePicker: false,
-      customRangeStep: 1,
-      customRangeStart:
-        localStorage.getItem('customRangeStart') &&
-        localStorage.getItem('customRangeStart') !== 'undefined'
-          ? localStorage.getItem('customRangeStart')
-          : new Date().toISOString().substr(0, 10),
-      customRangeEnd:
-        localStorage.getItem('customRangeEnd') &&
-        localStorage.getItem('customRangeEnd') !== 'undefined'
-          ? localStorage.getItem('customRangeEnd')
-          : new Date().toISOString().substr(0, 10)
-    };
+
+  data: () => ({
+    showRangePicker: false,
+    customRangeStep: 1,
+    customRangeStart:
+      localStorage.getItem('customRangeStart') &&
+      localStorage.getItem('customRangeStart') !== 'undefined'
+        ? localStorage.getItem('customRangeStart')
+        : new Date().toISOString().substr(0, 10),
+    customRangeEnd:
+      localStorage.getItem('customRangeEnd') &&
+      localStorage.getItem('customRangeEnd') !== 'undefined'
+        ? localStorage.getItem('customRangeEnd')
+        : new Date().toISOString().substr(0, 10),
+    chipColorStart: 'grey lighten-3',
+    chipColorEnd: 'grey lighten-3'
+  }),
+
+  computed: {
+    customDateRange() {
+      // Just convert the date string to Date object
+      return {
+        start: new Date(this.customRangeStart),
+        end: new Date(this.customRangeEnd)
+      };
+    }
+  },
+
+  methods: {
+    onApplyCustomRange() {
+      this.customRangeStep = 1;
+      this.showRangePicker = false;
+      localStorage.setItem('customRangeStart', this.customRangeStart);
+      localStorage.setItem('customRangeEnd', this.customRangeEnd);
+      this.chipColorStart = 'grey lighten-3';
+      this.chipColorEnd = 'grey lighten-3';
+
+      this.$emit('onApplyCustomRange', this.customDateRange);
+    }
   }
 };
 </script>
