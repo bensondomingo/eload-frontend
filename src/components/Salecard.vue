@@ -1,9 +1,5 @@
 <template>
-  <v-card
-    v-bind:loading="loading"
-    v-bind:color="cardData.color"
-    v-bind:dark="cardData.isDark"
-  >
+  <v-card v-bind:loading="loading" v-bind:color="cardData.color" v-bind:dark="cardData.isDark">
     <v-card-title class="headline">
       <v-icon>mdi-currency-php</v-icon>
       {{ amount }}
@@ -25,9 +21,12 @@ export default {
       required: true
     }
   },
-  data: () => ({
-    loading: false
-  })
+  data: () => ({}),
+  computed: {
+    loading() {
+      return this.$store.state.summaryCardLoding;
+    }
+  }
 };
 </script>
 

@@ -1,10 +1,8 @@
 <template>
   <v-app>
-    <Navbar />
-    <v-content background="#cbf3f0">
-      <v-container>
+    <Navbar @logout="logout" />
+    <v-content>
       <router-view></router-view>
-      </v-container>
     </v-content>
   </v-app>
 </template>
@@ -16,8 +14,30 @@ export default {
   components: { Navbar },
   data() {
     return {
-      transactions: []
+      transactions: [],
+      showLogin: false
     };
+  },
+
+  methods: {
+    logout() {
+      this.$store
+        .dispatch('logout')
+        .then(resp => {
+          console.log(resp);
+          this.$router.push({ name: 'login' });
+        })
+        .catch(err => {
+          console.log(
+            err,
+            'Request cannot be performed right now. Please check your network connection.'
+          );
+        });
+    }
+  },
+
+  beforeRouteEnter() {
+    console.log('hehe');
   }
 };
 </script>

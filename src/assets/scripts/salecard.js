@@ -1,4 +1,4 @@
-class SaleCardObject {
+export default class Summary {
   constructor(ref, title, color, isDark) {
     this.ref = ref;
     this.title = title;
@@ -6,5 +6,3 @@ class SaleCardObject {
     this.isDark = isDark || true;
   }
 }
-
-export { SaleCardObject };
