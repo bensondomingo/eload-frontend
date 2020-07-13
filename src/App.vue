@@ -25,7 +25,10 @@ export default {
         .dispatch('logout')
         .then(resp => {
           console.log(resp);
-          this.$router.push({ name: 'login' });
+          this.$router.push({ name: 'landing' });
+          this.$store.commit('reset_state');
+          localStorage.setItem('token', '');
+          this.$http.defaults.headers.common['Authorization'] = '';
         })
         .catch(err => {
           console.log(
@@ -34,10 +37,6 @@ export default {
           );
         });
     }
-  },
-
-  beforeRouteEnter() {
-    console.log('hehe');
   }
 };
 </script>

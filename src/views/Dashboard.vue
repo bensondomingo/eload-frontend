@@ -42,7 +42,7 @@
           color="#044762"
           :messages="rangeSelectorMsg"
           :error-messages="selectRangeErrors"
-          :disabled="ongoingFetch"
+          :disabled="$store.getters.fetchTransactions"
           @input="onRangeSelect"
           @change="selectRangeErrors=[]"
         ></v-select>
@@ -57,25 +57,26 @@
           <v-icon>mdi-filter-outline</v-icon>Filter
         </v-card-title>
 
-        <!-- Retailer selector -->
         <v-card-text class="px-2 pb-2">
           <v-row dense>
-            <v-col cols="12">
+            <!-- Retailer selector -->
+            <v-col cols="12" v-if="isStaff">
               <v-select
                 v-model="retailerFilter"
                 :items="retailers"
-                item-text="name"
+                item-text="user"
                 label="Retailer"
                 return-object
                 outlined
                 dense
               ></v-select>
             </v-col>
-            <v-col v-if="retailerFilter.name === 'ADMIN'" cols="12">
+
+            <!-- Transaction type filter -->
+            <v-col v-if="isStaff" cols="12">
               <v-radio-group
                 class="mt-0"
                 v-model="transactionTypeFilter"
-                :disabled="transactionTypeFilterDisabled"
                 label="Transaction Type"
                 row
               >
@@ -97,48 +98,22 @@
     </v-dialog>
 
     <!-- Sale cards -->
-    <v-row dense>
-      <v-col v-for="cardData in cardObjects" :key="cardData.ref" cols="12" sm="6" md="3">
-        <Salecard
-          ref="saleCards"
-          :key="cardData.ref"
-          :cardData="cardData"
-          :amount="Object.keys(summary).length != 0 ? summary[cardData.ref] : 0"
-        />
-      </v-col>
-    </v-row>
+    <SummaryCardList :transactions="filteredTransactions" />
     <!-- Transactions list -->
-    <v-row>
-      <v-col cols="12">
-        <TransactionList
-          :transactions="filteredTransactions"
-          @transactionClick="showTransactionDetail"
-        />
-      </v-col>
-    </v-row>
-
-    <TransactionDetail ref="transactionDetail" />
+    <TransactionList :transactions="filteredTransactions" :pageBottom="bottom" />
   </v-container>
 </template>
 
 <script>
-import { mapMutations, mapGetters } from 'vuex';
+import { mapGetters } from 'vuex';
 import { filter } from 'lodash';
-import Salecard from '@/components/Salecard';
+import SummaryCardList from '@/components/TheSummaryCardList';
 import CustomRangePicker from '@/components/CustomRangePicker';
 import TransactionList from '@/components/TheTransactionList';
-import TransactionDetail from '@/components/TheTransactionDetail';
-import Summary from '@/assets/scripts/salecard.js';
 import { dateRangeList } from '@/assets/scripts/daterange.js';
 
-const cashInCard = new Summary('cashIn', 'Cash In', '#05668d');
-// const balanceCard = new Summary('balance', 'Running Balance', '#05668d');
-const salesCard = new Summary('sales', 'Sales', '#028090');
-const rebatesCard = new Summary('rebates', 'Rabates', '#00a896');
-const topUpsCard = new Summary('topUps', 'Top-ups', '#02c39a');
-
 let transactionsCache = [];
-const DEFAULT_RETAILER_FILTER = { name: 'ADMIN', deviceHash: null };
+const DEFAULT_RETAILER_FILTER = { user: 'all', deviceHash: null };
 const DEFAULT_TRANSACTION_TYPE_FILTER = { label: 'ALL', value: 'all' };
 const transactionType = [
   DEFAULT_TRANSACTION_TYPE_FILTER,
@@ -155,10 +130,9 @@ const transactionType = [
 export default {
   name: 'Dashboard',
   components: {
-    Salecard,
+    SummaryCardList,
     CustomRangePicker,
-    TransactionList,
-    TransactionDetail
+    TransactionList
   },
 
   data() {
@@ -168,8 +142,6 @@ export default {
       showFilter: false,
       retailerFilter: DEFAULT_RETAILER_FILTER,
       transactionTypeFilter: DEFAULT_TRANSACTION_TYPE_FILTER.value,
-      transactionTypeFilterDisabled: false,
-      // retailers: RETAILERS,
       transactionType: transactionType,
       selectedRange:
         localStorage.getItem('range') &&
@@ -177,21 +149,13 @@ export default {
           ? localStorage.getItem('range')
           : dateRangeList[0].name,
       selectRangeErrors: [],
-      // transactions: [],
       filteredTransactions: [],
-      cardObjects: [
-        cashInCard,
-        // balanceCard,
-        salesCard,
-        rebatesCard,
-        topUpsCard
-      ],
       rangeOptions: dateRangeList
     };
   },
 
   computed: {
-    ...mapGetters(['ongoingFetch', 'transactions']),
+    ...mapGetters(['user', 'profile', 'isStaff', 'transactions']),
 
     rangeSelectorMsg() {
       const selectedRange = this.rangeOptions.find(
@@ -201,41 +165,9 @@ export default {
     },
 
     retailers() {
-      return [DEFAULT_RETAILER_FILTER, ...this.$store.getters.retailers];
-    },
-
-    summary() {
-      let balance;
-      const transactions = this.filteredTransactions;
-      console.log(transactions);
-      if (this.retailerFilter.name === DEFAULT_RETAILER_FILTER.name) {
-        balance = transactions.length ? transactions[0].running_balance : 0;
-      } else {
-        balance = NaN;
-      }
-      const cashIn = transactions
-        .filter(el => el.transaction_type === 'buy_order')
-        .reduce((acc, prev) => {
-          return acc + prev.amount;
-        }, 0);
-      const success = transactions.filter(
-        el => el.transaction_type === 'sell_order' && el.status === 'success'
-      );
-      const sales = success.reduce((acc, prev) => {
-        return acc + prev.amount;
-      }, 0);
-      const rebates = success.reduce((acc, prev) => {
-        return acc + prev.reward_amount;
-      }, 0);
-      const topUps = success.filter(el => el.amount < 100).length * 2;
-
-      return {
-        cashIn: cashIn,
-        balance: balance,
-        sales: sales,
-        rebates: rebates,
-        topUps: topUps
-      };
+      return this.isStaff
+        ? [DEFAULT_RETAILER_FILTER, ...this.$store.getters.retailers]
+        : null;
     }
   },
 
@@ -246,28 +178,21 @@ export default {
     },
 
     retailerFilter(newValue) {
-      if (newValue === DEFAULT_RETAILER_FILTER) {
+      if (newValue.user === 'DEFAULT_RETAILER_FILTER') {
         this.transactionTypeFilter = DEFAULT_TRANSACTION_TYPE_FILTER.value;
       }
     }
   },
 
   methods: {
-    ...mapMutations(['card_loading']),
-
-    showTransactionDetail(transactionId) {
-      console.log(transactionId);
-      this.$refs.transactionDetail.show = true;
-      this.$refs.transactionDetail.transactionId = transactionId;
-    },
-
-    fetchTransactions: async function(queryParams = null) {
+    async fetchTransactions(queryParams = null) {
       /*
         Fetch transactions from database.
       */
       const endpoint = '/cphapp/api/transactions/';
       let responseData = null;
       try {
+        this.$store.commit('fetchTransactions', true);
         const response = await this.$http.get(endpoint, {
           params: queryParams
         });
@@ -294,11 +219,10 @@ export default {
           console.log('Error', error.message);
           this.selectRangeErrors.push(error.message);
         }
-        this.$store.commit({ type: 'card_loading', value: false });
+        this.$store.commit('fetchTransactions', false);
         return;
       }
 
-      // this.transactions.push(...responseData.results);
       transactionsCache.push(...responseData.results);
       if (responseData.next) {
         const uri = decodeURIComponent(responseData.next);
@@ -316,8 +240,7 @@ export default {
         });
         transactionsCache = [];
       }
-      // this.setCardLoadingEffect(false);
-      this.$store.commit({ type: 'card_loading', value: false });
+      this.$store.commit('fetchTransactions', false);
     },
 
     onScroll() {
@@ -336,12 +259,14 @@ export default {
       }
 
       const objectFilter = {};
-      // Filter by retailer
-      if (this.retailerFilter !== DEFAULT_RETAILER_FILTER) {
-        objectFilter.user_agent = {};
-        objectFilter.user_agent.device_hash = this.retailerFilter.deviceHash;
-      } else {
-        // Filter by transaction_type only allowed when admin is selected
+
+      if (this.isStaff) {
+        // Filters for admin
+        if (this.retailerFilter !== DEFAULT_RETAILER_FILTER) {
+          // Filter by retailer
+          objectFilter.user_agent = {};
+          objectFilter.user_agent.device_hash = this.retailerFilter.device_hash;
+        }
         if (
           this.transactionTypeFilter !== DEFAULT_TRANSACTION_TYPE_FILTER.value
         ) {
@@ -349,7 +274,6 @@ export default {
         }
       }
 
-      console.log(objectFilter);
       this.filteredTransactions = filter(this.transactions, {
         ...objectFilter
       });
@@ -377,13 +301,10 @@ export default {
         return;
       }
 
-      // this.$store.commit({ type: 'card_loading', value: 'white' });
-      this.card_loading({ value: 'white' });
       try {
         this.fetchTransactions(range.queryObject);
       } catch (e) {
         alert(e);
-        this.card_loading({ value: false });
       }
     }
   },
@@ -399,25 +320,8 @@ export default {
     }
 
     // Fetch data based on selected range
-    // this.$store.commit({ type: 'card_loading', value: 'white' });
-    this.card_loading({ value: 'white' });
     let queryObject = range.queryObject;
     this.fetchTransactions(queryObject);
-  },
-
-  created() {
-    // Fetch profiles
-    this.$store
-      .dispatch('fetchProfiles')
-      .then(data => console.log(data))
-      .catch(err => {
-        if (err.respone) {
-          if (err.response.status === 401) {
-            this.$store.commit('auth_signout', err.response.data.detail);
-            this.$router.push({ name: 'login' });
-          }
-        }
-      });
   }
 };
 </script>

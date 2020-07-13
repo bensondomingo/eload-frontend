@@ -12,7 +12,7 @@
                 </v-col>
               </v-row>
             </v-container>
-            <v-form ref="loginForm" v-model="isLoginFormValid" lazy-validation>
+            <v-form ref="loginForm" v-model="isLoginFormValid">
               <v-text-field
                 v-model="username"
                 label="Username"
@@ -30,9 +30,10 @@
               ></v-text-field>
             </v-form>
             <v-btn
+              type="submit"
               color="primary"
               class="mt-2"
-              @click.stop="onSubmit"
+              @click="onSubmit"
               block
               depressed
               rounded
@@ -70,7 +71,7 @@ export default {
     }
   },
   methods: {
-    async onSubmit() {
+    onSubmit() {
       this.nonFieldErrors = [];
       if (!this.$refs.loginForm.validate()) {
         return;
@@ -81,11 +82,23 @@ export default {
           username: this.username,
           password: this.password
         })
-        .then(() => {
+        .then(token => {
           // Login successful
           this.isLoginFormValid = true;
           this.isCredentialsValid = true;
-          this.$router.push({ name: 'dashboard' });
+          localStorage.setItem('token', token);
+          this.$http.defaults.headers.common['Authorization'] =
+            'Token ' + token;
+
+          const redirect = this.$router.currentRoute.query.redirect
+            ? this.$router.currentRoute.query.redirect
+            : '/dashboard';
+
+          if (this.$store.getters.userDataFetch) {
+            this.$router.push({ path: redirect });
+          } else {
+            this.$router.push({ name: 'datafetch', query: { redirect } });
+          }
         })
         .catch(err => {
           // Login failed
@@ -99,6 +112,9 @@ export default {
       this.$refs.loginForm.reset();
       this.$emit('exit');
     }
+  },
+  created() {
+    console.log(this.$router);
   }
 };
 </script>
