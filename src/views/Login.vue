@@ -5,7 +5,7 @@
         <v-card flat>
           <v-card-title class="headline justify-center">Login</v-card-title>
           <v-card-text>
-            <v-container :class="{'d-none': !nonFieldErrors.length}">
+            <v-container v-if="nonFieldErrors ? !!nonFieldErrors.length : false">
               <v-row dense>
                 <v-col v-for="(err, index) in nonFieldErrors" :key="index" cols="12">
                   <v-alert type="error">{{ err }}</v-alert>
@@ -114,7 +114,9 @@ export default {
     }
   },
   created() {
-    console.log(this.$router);
+    if (this.$store.getters.isAuthenticated) {
+      this.$router.replace({ name: 'datafetch' });
+    }
   }
 };
 </script>

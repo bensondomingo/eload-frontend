@@ -1,7 +1,7 @@
 <template>
   <nav>
     <v-app-bar app clipped-left dark color="#2a9d8f">
-      <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon @click="drawer = !drawer" v-if="isAuthenticated"></v-app-bar-nav-icon>
       <v-toolbar-title>
         <span class="font-weight-light">Load</span>
         <span class="font-weight-bold">Ninja</span>
@@ -36,7 +36,7 @@
 
     <v-navigation-drawer app v-model="drawer" clipped>
       <v-list nav>
-        <v-list-item v-if="isAuthenticated">
+        <v-list-item>
           <v-list-item-avatar>
             <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
           </v-list-item-avatar>

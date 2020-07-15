@@ -1,7 +1,19 @@
 <template>
   <v-container>
-    <h1 class="display-1">dummy page -- {{ $router.currentRoute.name}}</h1>
-    <v-progress-circular :size="70" :width="7" color="purple" v-if="loading" indeterminate></v-progress-circular>
+    <v-dialog v-model="loading" persistent width="300">
+      <v-card color="primary" dark>
+        <v-card-text v-if="!error">
+          Loading your data
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
+        </v-card-text>
+        <v-alert
+          v-else
+          border="left"
+          type="error"
+          dismissible
+        >Something went wrong while loading your data. Close this alert to retry.</v-alert>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -11,7 +23,8 @@ export default {
   name: 'DummyView',
   data: () => ({
     loading: true,
-    redirect: null
+    redirect: null,
+    error: false
   }),
 
   computed: {
@@ -21,11 +34,12 @@ export default {
   methods: {
     routerPush() {
       this.loading = false;
-      this.$router.push({ path: this.redirect });
+      this.$router.replace({ path: this.redirect || 'dashboard' });
     }
   },
 
   created() {
+    this.loading = true;
     this.redirect = this.$router.currentRoute.query.redirect;
 
     this.$store
@@ -38,6 +52,7 @@ export default {
             .dispatch('fetchRetailers')
             .then(retailers => {
               console.log(retailers);
+              // this.routerPush();
               this.routerPush();
             })
             .catch(err => console.log(err));
@@ -45,42 +60,22 @@ export default {
       })
       .catch(err => {
         console.log(err);
-      });
-  },
-
-  _created() {
-    const redirect = this.$router.currentRoute.query.redirect;
-    const currentPath = this.$router.currentRoute.path;
-
-    console.log(redirect);
-    console.log(currentPath);
-    this.redirect = currentPath == redirect ? null : redirect;
-
-    if (this.userDataFetched) {
-      this.routerPush();
-      return;
-    }
-    // 1. Fetch User data
-    this.$store
-      .dispatch('fetchUser')
-      .then(userObj => {
-        console.log(userObj);
-        // 2. If staff, fetch retailers
-        if (this.isStaff) {
-          this.$store
-            .dispatch('fetchRetailers')
-            .then(retailers => {
-              console.log(retailers);
-              this.routerPush();
-            })
-            .catch(err => console.log(err));
-        } else this.routerPush();
-      })
-      .catch(err => {
-        console.log(err);
+        if (err.response) {
+          if (err.response.status === 401) {
+            this.$store.commit('auth_signout');
+            this.$store.commit('reset_state');
+            localStorage.setItem('token', '');
+            this.$http.defaults.headers.common['Authorization'] = '';
+            this.$router.push({ name: 'login' });
+          } else {
+            console.log(err.response);
+          }
+        } else {
+          this.loading = false;
+          this.error = true;
+        }
       });
   }
-  // beforeRouteEnter(to, from, next) {}
 };
 </script>
 

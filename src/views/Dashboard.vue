@@ -186,9 +186,7 @@ export default {
 
   methods: {
     async fetchTransactions(queryParams = null) {
-      /*
-        Fetch transactions from database.
-      */
+      /* Fetch transactions from database. */
       const endpoint = '/cphapp/api/transactions/';
       let responseData = null;
       try {
@@ -198,6 +196,7 @@ export default {
         });
         responseData = response.data;
       } catch (error) {
+        console.log(error);
         if (error.response) {
           if (error.response.status === 401) {
             this.$store.commit('auth_signout', error.response.data.detail);
@@ -206,7 +205,7 @@ export default {
               query: { redirect: '/' }
             });
           } else {
-            this.selectRangeErrors.push(error.response.data.detail);
+            this.selectRangeErrors.push('Something went wrong. Please reload this page.');
           }
         } else if (error.request) {
           // The request was made but no response was received
@@ -290,7 +289,7 @@ export default {
     },
 
     onRangeSelect(selected) {
-      // this.transactions = [];
+      this.selectRangeErrors = [];
       transactionsCache = [];
       let range = this.rangeOptions.find(el => el.name === this.selectedRange);
 

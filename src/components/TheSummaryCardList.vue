@@ -1,12 +1,11 @@
 <template>
-  <v-row dense>
-    <v-col v-for="obj in cardObjects" :key="obj.ref" cols="12">
-      <SummaryCardItem
-        :cardData="obj"
-        :value="summary[obj.ref] || 0"
-      />
-    </v-col>
-  </v-row>
+  <div>
+    <v-row dense>
+      <v-col v-for="obj in cardObjects" :key="obj.ref" cols="12">
+        <SummaryCardItem :cardData="obj" :value="summary[obj.ref] || 0" />
+      </v-col>
+    </v-row>
+  </div>
 </template>
 
 <script>
