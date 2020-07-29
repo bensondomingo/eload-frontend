@@ -38,12 +38,12 @@ export default {
       const transactions = this.transactions;
       console.log(transactions);
       const cashIn = transactions
-        .filter(el => el.transaction_type === 'buy_order')
+        .filter(el => el.transaction_type === 'buyorder')
         .reduce((acc, prev) => {
           return acc + prev.amount;
         }, 0);
       const success = transactions.filter(
-        el => el.transaction_type === 'sell_order' && el.status === 'success'
+        el => el.transaction_type === 'sellorder' && el.status === 'settled'
       );
       const sales = success.reduce((acc, prev) => {
         return acc + prev.amount;

@@ -16,7 +16,7 @@
               v-else
               class="white--text font-weight-bold"
               color="blue-grey"
-              size="42"
+              size="36"
               v-text="avatar"
             ></v-avatar>
           </v-btn>

@@ -1,9 +1,11 @@
 <template>
   <v-app>
     <Navbar @logout="logout" />
-    <v-content>
-      <router-view></router-view>
-    </v-content>
+    <v-main>
+      <v-container>
+        <router-view></router-view>
+      </v-container>
+    </v-main>
   </v-app>
 </template>
 

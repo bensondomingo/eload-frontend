@@ -119,11 +119,11 @@ const transactionType = [
   DEFAULT_TRANSACTION_TYPE_FILTER,
   {
     label: 'SELL',
-    value: 'sell_order'
+    value: 'sellorder'
   },
   {
     label: 'CASH IN',
-    value: 'buy_order'
+    value: 'buyorder'
   }
 ];
 
@@ -205,7 +205,9 @@ export default {
               query: { redirect: '/' }
             });
           } else {
-            this.selectRangeErrors.push('Something went wrong. Please reload this page.');
+            this.selectRangeErrors.push(
+              'Something went wrong. Please reload this page.'
+            );
           }
         } else if (error.request) {
           // The request was made but no response was received
@@ -238,8 +240,8 @@ export default {
           transactions: transactionsCache
         });
         transactionsCache = [];
+        this.$store.commit('fetchTransactions', false);
       }
-      this.$store.commit('fetchTransactions', false);
     },
 
     onScroll() {
@@ -261,7 +263,7 @@ export default {
 
       if (this.isStaff) {
         // Filters for admin
-        if (this.retailerFilter !== DEFAULT_RETAILER_FILTER) {
+        if (this.retailerFilter.user !== DEFAULT_RETAILER_FILTER.user) {
           // Filter by retailer
           objectFilter.user_agent = {};
           objectFilter.user_agent.device_hash = this.retailerFilter.device_hash;
@@ -310,7 +312,6 @@ export default {
 
   mounted() {
     /* Pre-fetch transactions data from the server */
-    // 1. Get selectedRange from localStorage
     const range = this.rangeOptions.find(el => el.name === this.selectedRange);
     if (this.selectedRange === 'Custom Range') {
       range.dateStart = this.$refs.customRangePicker.customDateRange.start;

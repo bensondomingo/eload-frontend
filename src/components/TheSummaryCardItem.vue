@@ -3,9 +3,13 @@
     <v-card-title class="headline">
       <v-progress-circular indeterminate color="white" v-if="loading"></v-progress-circular>
       <span v-else>
-        <v-icon>mdi-currency-php</v-icon>
-        <span v-text="value"></span>
+        <!-- <v-icon>mdi-currency-php</v-icon> -->
+        P<span v-text="value"></span>
       </span>
+      <v-spacer></v-spacer>
+      <v-btn icon>
+        <v-icon>mdi-cog</v-icon>
+      </v-btn>
     </v-card-title>
     <v-card-subtitle>{{ cardData.title }}</v-card-subtitle>
     <v-card-actions>

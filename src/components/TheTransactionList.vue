@@ -137,17 +137,16 @@ export default {
     },
 
     onShowDetail(transactionId) {
-      console.log(transactionId);
       const transaction = this.transactions.find(t => t.id === transactionId);
       // Basic details
       let details = [
-        { name: 'Transaction ID', value: transaction.id },
+        { name: 'Confirmation code', value: transaction.confirmation_code },
         { name: 'Amount', value: transaction.amount },
         { name: 'Posted amount', value: transaction.posted_amount },
         { name: 'Status', value: transaction.status }
       ];
 
-      if (transaction.transaction_type == 'sell_order') {
+      if (transaction.transaction_type == 'sellorder') {
         details.push(
           { name: 'Phone number', value: transaction.phone_number },
           { name: 'Network', value: transaction.network }
@@ -174,13 +173,13 @@ export default {
             value: transaction.running_balance
           }
         );
-        if (transaction.transaction_type === 'sell_order') {
+        if (transaction.transaction_type === 'sellorder') {
           const { device_hash } = transaction.user_agent;
           const retailer = this.retailers.find(
             p => p.device_hash == device_hash
           ).user;
           details.splice(7, 0, { name: 'Retailer', value: retailer });
-          details.push({ name: 'Order ID', value: transaction.order_id });
+          details.splice(0, 0, { name: 'Order ID', value: transaction.id });
         }
       }
 
