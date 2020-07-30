@@ -1,11 +1,11 @@
 <template>
   <v-app>
-    <Navbar />
-    <v-content background="#cbf3f0">
+    <Navbar @logout="logout" />
+    <v-main>
       <v-container>
-      <router-view></router-view>
+        <router-view></router-view>
       </v-container>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
@@ -16,8 +16,29 @@ export default {
   components: { Navbar },
   data() {
     return {
-      transactions: []
+      transactions: [],
+      showLogin: false
     };
+  },
+
+  methods: {
+    logout() {
+      this.$store
+        .dispatch('logout')
+        .then(resp => {
+          console.log(resp);
+          this.$router.push({ name: 'landing' });
+          this.$store.commit('reset_state');
+          localStorage.setItem('token', '');
+          this.$http.defaults.headers.common['Authorization'] = '';
+        })
+        .catch(err => {
+          console.log(
+            err,
+            'Request cannot be performed right now. Please check your network connection.'
+          );
+        });
+    }
   }
 };
 </script>

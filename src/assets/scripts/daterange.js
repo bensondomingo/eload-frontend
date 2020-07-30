@@ -46,8 +46,8 @@ class ThisWeek extends DateRange {
     this.dateStart.setDate(this.now.getDate() - this.now.getDay());
     this.dateEnd.setDate(this.now.getDate() + (6 - this.now.getDay()));
     this.queryObject = {
-      transaction_date__gte: this.dateStart.toLocaleDateString(),
-      transaction_date__lt: this.dateEnd.toLocaleDateString()
+      td_gte: this.dateStart.toLocaleDateString(),
+      td_lte: this.dateEnd.toLocaleDateString()
     };
   }
 }
@@ -58,8 +58,8 @@ class LastWeek extends DateRange {
     this.dateEnd.setDate(this.now.getDate() - this.now.getDay() - 1);
     this.dateStart.setDate(this.dateEnd.getDate() - 6);
     this.queryObject = {
-      transaction_date__gte: this.dateStart.toLocaleDateString(),
-      transaction_date__lt: this.dateEnd.toLocaleDateString()
+      td_gte: this.dateStart.toLocaleDateString(),
+      td_lte: this.dateEnd.toLocaleDateString()
     };
   }
 }
@@ -96,15 +96,15 @@ class CustomRange extends DateRange {
   constructor() {
     super('Custom Range');
     this.queryObject = {
-      transaction_date__gte: this.dateStart.toLocaleDateString(),
-      transaction_date__lt: this.dateEnd.toLocaleDateString()
+      ctd_gte: this.dateStart.toISOString(),
+      ctd_lte: this.dateEnd.toISOString()
     };
   }
   updateQueryObject() {
     if (this.dateEnd.getTime() - this.dateStart.getTime() > 0) {
       this.queryObject = {
-        transaction_date__gte: this.dateStart.toLocaleDateString(),
-        transaction_date__lt: this.dateEnd.toLocaleDateString()
+        ctd_gte: this.dateStart.toISOString(),
+        ctd_lte: this.dateEnd.toISOString()
       };
     } else {
       this.queryObject = {
@@ -112,6 +112,13 @@ class CustomRange extends DateRange {
         transaction_date__month: this.dateStart.getMonth() + 1,
         transaction_date__year: this.dateStart.getFullYear()
       };
+    }
+  }
+  get rangeStr() {
+    if (this.dateEnd.getTime() - this.dateStart.getTime() === 0) {
+      return this.dateStart.toLocaleDateString();
+    } else {
+      return `${this.dateStart.toLocaleString()} - ${this.dateEnd.toLocaleString()}`;
     }
   }
 }
