@@ -15,7 +15,8 @@ export default new Vuex.Store({
     retailers: [],
     transactions: [],
     fetchTransactions: false,
-    cardLoading: false
+    cardLoading: false,
+    pageBottom: false
   },
 
   getters: {
@@ -61,7 +62,8 @@ export default new Vuex.Store({
     isAuthenticated: state => !!state.token,
     fetchTransactions: state => state.fetchTransactions,
     cardLoading: state => state.fetchTransactions,
-    transactions: state => state.transactions
+    transactions: state => state.transactions,
+    pageBottom: state => state.pageBottom
   },
 
   mutations: {
@@ -130,6 +132,10 @@ export default new Vuex.Store({
 
     fetchTransactions(state, value) {
       state.fetchTransactions = value;
+    },
+
+    scrolledToBottom(state, value) {
+      state.pageBottom = value;
     }
   },
 

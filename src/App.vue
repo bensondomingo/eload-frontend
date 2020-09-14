@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-scroll="onScroll">
     <Navbar @logout="logout" />
     <v-main>
       <v-container>
@@ -17,11 +17,23 @@ export default {
   data() {
     return {
       transactions: [],
-      showLogin: false
+      showLogin: false,
+      pageBottom: true
     };
   },
 
   methods: {
+    onScroll() {
+      const bottom =
+        window.pageYOffset + window.innerHeight >=
+        document.documentElement.offsetHeight - 10;
+
+      if (this.pageBottom != bottom) {
+        this.pageBottom = bottom;
+        this.$store.commit('scrolledToBottom', bottom);
+      }
+    },
+
     logout() {
       this.$store
         .dispatch('logout')

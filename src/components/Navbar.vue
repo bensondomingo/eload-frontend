@@ -70,6 +70,11 @@ export default {
       item: 0,
       items: [
         {
+          text: 'Home',
+          icon: 'mdi-home',
+          route: { path: '/home' } 
+        },
+        {
           text: 'Dashboard',
           icon: 'mdi-view-dashboard',
           route: { path: '/dashboard' }

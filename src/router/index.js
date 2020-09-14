@@ -13,6 +13,15 @@ const routes = [
     component: Landing
   },
   {
+    path: '/home',
+    name: 'home',
+    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
+    meta: {
+      requiresAuth: true,
+      requireUserData: true
+    }
+  },
+  {
     path: '/datafetch',
     name: 'datafetch',
     component: DataFetch,
@@ -45,6 +54,12 @@ const routes = [
     path: '/auth/login',
     name: 'login',
     component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
+  },
+  {
+    path: '/minda/products',
+    name: 'products',
+    component: () =>
+      import(/* webpackChunkName: "login" */ '@/views/Products.vue')
   },
   {
     path: '*',

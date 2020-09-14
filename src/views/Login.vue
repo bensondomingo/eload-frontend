@@ -2,7 +2,7 @@
   <v-container>
     <v-row dense>
       <v-col cols="12">
-        <v-card flat>
+        <v-card flat :loading="loading">
           <v-card-title class="headline justify-center">Login</v-card-title>
           <v-card-text>
             <v-container v-if="nonFieldErrors ? !!nonFieldErrors.length : false">
@@ -27,6 +27,7 @@
                 prepend-inner-icon="mdi-shield-key"
                 :rules="passwordRules"
                 required
+                @keyup.enter="onSubmit"
               ></v-text-field>
             </v-form>
             <v-btn
@@ -54,7 +55,8 @@ export default {
     username: '',
     password: '',
     isCredentialsValid: false,
-    nonFieldErrors: []
+    nonFieldErrors: [],
+    loading: false
   }),
   computed: {
     userNameRules() {
@@ -72,6 +74,7 @@ export default {
   },
   methods: {
     onSubmit() {
+      this.loading = 'primary';
       this.nonFieldErrors = [];
       if (!this.$refs.loginForm.validate()) {
         return;
@@ -105,6 +108,9 @@ export default {
           this.isLoginFormValid = true;
           this.isCredentialsValid = true;
           this.nonFieldErrors = err;
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
 

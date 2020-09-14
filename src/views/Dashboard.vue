@@ -245,6 +245,7 @@ export default {
     },
 
     onScroll() {
+      console.log(event)
       this.menuBtn = window.pageYOffset <= 80;
       this.bottom =
         window.pageYOffset + window.innerHeight >=
@@ -264,10 +265,10 @@ export default {
       if (this.isStaff) {
         // Filters for admin
         if (this.retailerFilter.user !== DEFAULT_RETAILER_FILTER.user) {
-          // Filter by retailer
-          objectFilter.user_agent = {};
-          objectFilter.user_agent.device_hash = this.retailerFilter.device_hash;
+          // Filter by retailer.id
+          objectFilter.retailer = this.retailerFilter.id;
         }
+        // Filter by transaction_type
         if (
           this.transactionTypeFilter !== DEFAULT_TRANSACTION_TYPE_FILTER.value
         ) {

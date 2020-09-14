@@ -51,7 +51,9 @@ export default {
       const rebates = success.reduce((acc, prev) => {
         return acc + prev.reward_amount;
       }, 0);
-      const topUps = success.filter(el => el.amount < 100).length * 2;
+      const topUps = success.reduce((acc, prev) => {
+        return acc + prev.top_up_amount;
+      }, 0);
 
       return {
         cash_in: cashIn,

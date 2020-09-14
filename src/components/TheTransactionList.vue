@@ -1,38 +1,45 @@
 <template>
   <div v-if="transactions.length">
     <v-row dense v-if="showList">
-      <v-col class="mb-1 pa-0" cols="12" v-for="transaction in listed" :key="transaction.id">
-        <v-alert
-          class="mb-0"
-          :color="transaction.status === 'refunded' ? 'error' : 'success'"
-          :value="transaction.visible"
-          border="left"
-          transition="scale-transition"
-          outlined
-          dense
-        >
-          <div class="d-flex">
-            <!-- Number/Amount -->
-            <div>
-              <p class="heading-6 mb-0" v-text="transaction.title"></p>
-              <p class="caption mb-0" v-text="transaction.subtitle"></p>
+      <v-col
+        class="mb-1 pa-0"
+        cols="12"
+        v-for="transaction in transactionList"
+        :key="transaction.id"
+      >
+        <v-fab-transition>
+          <v-alert
+            class="mb-0"
+            :color="transaction.status === 'refunded' ? 'error' : 'success'"
+            :value="transaction.visible"
+            border="left"
+            transition="scale-transition"
+            outlined
+            dense
+          >
+            <div class="d-flex">
+              <!-- Number/Amount -->
+              <div>
+                <p class="heading-6 mb-0" v-text="transaction.title"></p>
+                <p class="caption mb-0" v-text="transaction.subtitle"></p>
+              </div>
+              <v-spacer></v-spacer>
+              <!-- Status/Date -->
+              <div class="d-flex flex-column align-end">
+                <v-btn
+                  @click="onShowDetail(transaction.id)"
+                  :color="transaction.status === 'refunded' ? 'error' : 'success'"
+                  small
+                  icon
+                >
+                  <v-icon v-if="transaction.status === 'success'">mdi-checkbox-marked-circle</v-icon>
+                  <v-icon v-else>mdi-alert-circle-outline</v-icon>
+                </v-btn>
+                <p class="caption mb-0" v-text="transaction.date"></p>
+              </div>
             </div>
-            <v-spacer></v-spacer>
-            <!-- Status/Date -->
-            <div class="d-flex flex-column align-end">
-              <v-btn
-                @click="onShowDetail(transaction.id)"
-                :color="transaction.status === 'refunded' ? 'error' : 'success'"
-                small
-                icon
-              >
-                <v-icon v-if="transaction.status === 'success'">mdi-checkbox-marked-circle</v-icon>
-                <v-icon v-else>mdi-alert-circle-outline</v-icon>
-              </v-btn>
-              <p class="caption mb-0" v-text="transaction.date"></p>
-            </div>
-          </div>
-        </v-alert>
+          </v-alert>
+        </v-fab-transition>
       </v-col>
     </v-row>
 
@@ -174,10 +181,13 @@ export default {
           }
         );
         if (transaction.transaction_type === 'sellorder') {
-          const { device_hash } = transaction.user_agent;
-          const retailer = this.retailers.find(
-            p => p.device_hash == device_hash
-          ).user;
+          let retailer = this.retailers.find(
+            retailer => retailer.id == transaction.retailer
+          );
+          retailer = retailer
+            ? retailer.user
+            : `Device ID ${transaction.device}`;
+
           details.splice(7, 0, { name: 'Retailer', value: retailer });
           details.splice(0, 0, { name: 'Order ID', value: transaction.id });
         }
