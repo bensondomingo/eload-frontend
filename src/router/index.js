@@ -2,6 +2,12 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Landing from '@/views/Landing.vue';
 import DataFetch from '@/views/DataFetch.vue';
+import Home from '@/views/Home.vue';
+import Dashboard from '@/views/Dashboard.vue';
+import Profile from '@/views/Profile.vue';
+import Login from '@/views/Login.vue';
+import Products from '@/views/Products.vue';
+import NotFound from '@/views/404NotFound.vue';
 
 import store from '@/store/store.js';
 
@@ -15,7 +21,8 @@ const routes = [
   {
     path: '/home',
     name: 'home',
-    component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
+    component: Home,
+    // component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
     meta: {
       requiresAuth: true,
       requireUserData: true
@@ -33,8 +40,9 @@ const routes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: () =>
-      import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
+    component: Dashboard,
+    // component: () =>
+    //   import(/* webpackChunkName: "dashboard" */ '@/views/Dashboard.vue'),
     meta: {
       requiresAuth: true,
       requireUserData: true
@@ -43,8 +51,9 @@ const routes = [
   {
     path: '/profile',
     name: 'profile',
-    component: () =>
-      import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
+    component: Profile,
+    // component: () =>
+    //   import(/* webpackChunkName: "profile" */ '@/views/Profile.vue'),
     meta: {
       requiresAuth: true,
       requireUserData: true
@@ -53,19 +62,22 @@ const routes = [
   {
     path: '/auth/login',
     name: 'login',
-    component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
+    component: Login
+    // component: () => import(/* webpackChunkName: "login" */ '@/views/Login.vue')
   },
   {
     path: '/minda/products',
     name: 'products',
-    component: () =>
-      import(/* webpackChunkName: "login" */ '@/views/Products.vue')
+    component: Products
+    // component: () =>
+    //   import(/* webpackChunkName: "login" */ '@/views/Products.vue')
   },
   {
     path: '*',
     name: 'notFound',
-    component: () =>
-      import(/* webpackChunkName: "notfound" */ '@/views/404NotFound.vue')
+    component: NotFound
+    // component: () =>
+    //   import(/* webpackChunkName: "notfound" */ '@/views/404NotFound.vue')
   }
 ];
 
