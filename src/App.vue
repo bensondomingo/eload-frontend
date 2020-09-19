@@ -39,7 +39,6 @@ export default {
         .dispatch('logout')
         .then(resp => {
           console.log(resp);
-          this.$router.push({ name: 'landing' });
           this.$store.commit('reset_state');
           localStorage.setItem('token', '');
           this.$http.defaults.headers.common['Authorization'] = '';
@@ -49,7 +48,8 @@ export default {
             err,
             'Request cannot be performed right now. Please check your network connection.'
           );
-        });
+        })
+        .finally(() => this.$router.push({ name: 'login' }));
     }
   }
 };

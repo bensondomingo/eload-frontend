@@ -1,6 +1,6 @@
 const BundleTracker = require('webpack-bundle-tracker');
 
-module.exports = {
+const exp = {
   publicPath: 'http://127.0.0.1:8080/',
   // outputDir: './dist/',
   transpileDependencies: ['vuetify'],
@@ -26,13 +26,18 @@ module.exports = {
       .https(false)
       .disableHostCheck(true)
       .headers({ 'Access-Control-Allow-Origin': ['*'] });
-  },
-
-  // uncomment before executing 'npm run build'
-  css: {
-    extract: {
-      filename: 'bundle.css',
-      chunkFilename: 'bundle.css'
-    }
   }
 };
+
+if (process.env.NODE_ENV === 'production') {
+  exp.publicPath = '/static/';
+  exp.css = {
+    extract: {
+      filename: 'bundle.css',
+      chunkFilename: '[name].css',
+      publicPath: '/static/'
+    }
+  };
+}
+
+module.exports = { ...exp };

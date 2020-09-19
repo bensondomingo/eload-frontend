@@ -34,7 +34,7 @@ export default {
   methods: {
     routerPush() {
       this.loading = false;
-      this.$router.replace({ path: this.redirect || 'dashboard' });
+      this.$router.replace({ path: this.redirect || 'home' });
     }
   },
 

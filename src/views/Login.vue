@@ -95,7 +95,7 @@ export default {
 
           const redirect = this.$router.currentRoute.query.redirect
             ? this.$router.currentRoute.query.redirect
-            : '/dashboard';
+            : '/home';
 
           if (this.$store.getters.userDataFetch) {
             this.$router.push({ path: redirect });
