@@ -97,8 +97,8 @@
             </v-list>
 
             <!-- Confirmation dialog -->
-            <v-dialog v-model="confirmDialog" v-if="product">
-              <v-card :loading="confirmCardLoading" max-length="300">
+            <v-dialog v-model="confirmDialog" v-if="product" max-width="300">
+              <v-card :loading="confirmCardLoading">
                 <!-- Outlet image -->
                 <v-img class="align-end" max-height="150px" :src="paymentOutlet.logoUrl" contain></v-img>
                 <!-- Title -->
@@ -215,15 +215,13 @@ export default {
       this.$http
         .get('/cphapp/api/buy-product/', { params })
         .then(resp => {
-          setTimeout(() => {
-            console.log(resp);
+          console.log(resp);
 
-            // Update products
-            this.paymentOutlet = new PaymentOutlet(resp.data);
-            console.log(this.paymentOutlet);
-            this.setNumberInputLoading(false);
-            this.selectProductDialog = true;
-          }, 2000);
+          // Update products
+          this.paymentOutlet = new PaymentOutlet(resp.data);
+          console.log(this.paymentOutlet);
+          this.setNumberInputLoading(false);
+          this.selectProductDialog = true;
         })
         .catch(err => {
           this.setNumberInputLoading(false);
