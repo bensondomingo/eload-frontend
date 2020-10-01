@@ -43,7 +43,6 @@ export default {
         .then(resp => {
           console.log('Token delete successful? ', resp);
           console.log('Deleting FCM token from db ...');
-
           this.$http
             .delete(`/fcm/api/fcmdevices/${token.id}/`)
             .then(resp => {
