@@ -28,7 +28,15 @@
           required
         ></v-text-field>
       </v-form>
-      <v-btn color="primary" class="mt-2" @click.stop="onSubmit" block depressed rounded>Submit</v-btn>
+      <v-btn
+        color="primary"
+        class="mt-2"
+        @click.stop="onSubmit"
+        block
+        depressed
+        rounded
+        >Submit</v-btn
+      >
     </v-card-text>
   </v-card>
 </template>
@@ -113,5 +121,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

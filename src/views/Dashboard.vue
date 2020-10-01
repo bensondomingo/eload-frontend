@@ -3,7 +3,7 @@
     <v-fab-transition>
       <v-btn
         v-show="menuBtn"
-        @click="showFilter=true"
+        @click="showFilter = true"
         color="pink lighten-1"
         dark
         fab
@@ -44,14 +44,21 @@
           :error-messages="selectRangeErrors"
           :disabled="$store.getters.fetchTransactions"
           @input="onRangeSelect"
-          @change="selectRangeErrors=[]"
+          @change="selectRangeErrors = []"
         ></v-select>
       </v-col>
-      <CustomRangePicker ref="customRangePicker" @onCustomRangeApply="onCustomRangeApply" />
+      <CustomRangePicker
+        ref="customRangePicker"
+        @onCustomRangeApply="onCustomRangeApply"
+      />
     </v-row>
 
     <!-- Filter Dialog -->
-    <v-dialog v-model="showFilter" class="d-flex justify-center" max-width="800">
+    <v-dialog
+      v-model="showFilter"
+      class="d-flex justify-center"
+      max-width="800"
+    >
       <v-card>
         <v-card-title class="text-center">
           <v-icon>mdi-filter-outline</v-icon>Filter
@@ -100,7 +107,10 @@
     <!-- Sale cards -->
     <SummaryCardList :transactions="filteredTransactions" />
     <!-- Transactions list -->
-    <TransactionList :transactions="filteredTransactions" :pageBottom="bottom" />
+    <TransactionList
+      :transactions="filteredTransactions"
+      :pageBottom="bottom"
+    />
   </v-container>
 </template>
 
@@ -245,7 +255,7 @@ export default {
     },
 
     onScroll() {
-      console.log(event)
+      console.log(event);
       this.menuBtn = window.pageYOffset <= 80;
       this.bottom =
         window.pageYOffset + window.innerHeight >=

@@ -5,9 +5,7 @@
 <script>
 export default {
   name: 'Settings'
-}
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

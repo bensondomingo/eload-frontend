@@ -1,51 +1,84 @@
 <template>
   <div class="custom-range-picker">
-    <v-dialog v-model="showTimePicker" class="d-flex justify-center" max-width="300">
+    <v-dialog
+      v-model="showTimePicker"
+      class="d-flex justify-center"
+      max-width="300"
+    >
       <v-time-picker v-model="timeStart" v-if="step === 1">
-        <v-btn color="primary" @click="onTimeSelect" outlined rounded block>Apply</v-btn>
+        <v-btn color="primary" @click="onTimeSelect" outlined rounded block
+          >Apply</v-btn
+        >
       </v-time-picker>
 
       <v-time-picker v-model="timeEnd" v-if="step === 2">
-        <v-btn color="primary" @click="onTimeSelect" outlined rounded block>Apply</v-btn>
+        <v-btn color="primary" @click="onTimeSelect" outlined rounded block
+          >Apply</v-btn
+        >
       </v-time-picker>
     </v-dialog>
 
     <v-dialog v-model="showRangePicker" max-width="300">
       <v-stepper v-model="step">
         <v-stepper-header>
-          <v-stepper-step editable :complete="step > 1" step="1">Start</v-stepper-step>
+          <v-stepper-step editable :complete="step > 1" step="1"
+            >Start</v-stepper-step
+          >
           <v-divider></v-divider>
           <v-stepper-step :complete="step > 2" step="2">End</v-stepper-step>
         </v-stepper-header>
 
         <v-stepper-items>
           <v-stepper-content step="1">
-            <v-date-picker v-model="dateStart" full-width no-title show-current="false">
+            <v-date-picker
+              v-model="dateStart"
+              full-width
+              no-title
+              show-current="false"
+            >
               <v-row dense>
                 <v-col class="d-flex" cols="12">
                   <v-btn icon @click="showTimePicker = true">
                     <v-icon>mdi-clock-outline</v-icon>
                   </v-btn>
-                  <v-btn class="flex-grow-1 primary" @click="step = 2">Next</v-btn>
+                  <v-btn class="flex-grow-1 primary" @click="step = 2"
+                    >Next</v-btn
+                  >
                 </v-col>
                 <v-col class="d-flex justify-center" cols="12">
-                  <v-chip class="flew-grow-1" v-text="chipMessage.startMessage"></v-chip>
+                  <v-chip
+                    class="flew-grow-1"
+                    v-text="chipMessage.startMessage"
+                  ></v-chip>
                 </v-col>
               </v-row>
             </v-date-picker>
           </v-stepper-content>
 
           <v-stepper-content step="2">
-            <v-date-picker v-model="dateEnd" full-width no-title show-current="false">
+            <v-date-picker
+              v-model="dateEnd"
+              full-width
+              no-title
+              show-current="false"
+            >
               <v-row dense>
                 <v-col class="d-flex justify-center" cols="12">
                   <v-btn icon @click="showTimePicker = true">
                     <v-icon>mdi-clock-outline</v-icon>
                   </v-btn>
-                  <v-btn class="flex-grow-1" color="primary" @click="onCustomRangeApply">Apply</v-btn>
+                  <v-btn
+                    class="flex-grow-1"
+                    color="primary"
+                    @click="onCustomRangeApply"
+                    >Apply</v-btn
+                  >
                 </v-col>
                 <v-col class="d-flex justify-center" cols="12">
-                  <v-chip class="flew-grow-1" v-text="chipMessage.endMessage"></v-chip>
+                  <v-chip
+                    class="flew-grow-1"
+                    v-text="chipMessage.endMessage"
+                  ></v-chip>
                 </v-col>
               </v-row>
             </v-date-picker>
@@ -133,5 +166,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

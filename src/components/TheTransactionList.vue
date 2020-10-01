@@ -28,11 +28,15 @@
               <div class="d-flex flex-column align-end">
                 <v-btn
                   @click="onShowDetail(transaction.id)"
-                  :color="transaction.status === 'refunded' ? 'error' : 'success'"
+                  :color="
+                    transaction.status === 'refunded' ? 'error' : 'success'
+                  "
                   small
                   icon
                 >
-                  <v-icon v-if="transaction.status === 'success'">mdi-checkbox-marked-circle</v-icon>
+                  <v-icon v-if="transaction.status === 'success'"
+                    >mdi-checkbox-marked-circle</v-icon
+                  >
                   <v-icon v-else>mdi-alert-circle-outline</v-icon>
                 </v-btn>
                 <p class="caption mb-0" v-text="transaction.date"></p>
@@ -57,7 +61,9 @@
           <v-list-item v-for="(detail, index) in details" :key="index">
             <v-list-item-content>
               <v-list-item-title v-text="detail.name"></v-list-item-title>
-              <v-list-item-subtitle v-text="detail.value"></v-list-item-subtitle>
+              <v-list-item-subtitle
+                v-text="detail.value"
+              ></v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-list>
@@ -214,5 +220,4 @@ export default {
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>

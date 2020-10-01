@@ -1,7 +1,12 @@
 <template>
   <v-row dense>
     <v-col cols="12">
-      <v-form class="mb-4" v-model="isNumberValid" ref="numberForm" lazy-validation>
+      <v-form
+        class="mb-4"
+        v-model="isNumberValid"
+        ref="numberForm"
+        lazy-validation
+      >
         <v-text-field
           ref="number"
           v-model="number"
@@ -27,7 +32,9 @@
       <v-snackbar v-model="snackbar" timeout="-1">
         {{ snackbarText }}
         <template v-slot:action="{ attrs }">
-          <v-btn color="pink" text v-bind="attrs" @click="snackbar = false">Close</v-btn>
+          <v-btn color="pink" text v-bind="attrs" @click="snackbar = false"
+            >Close</v-btn
+          >
         </template>
       </v-snackbar>
 
@@ -68,13 +75,20 @@
                 append-icon="mdi-send"
                 :rules="customAmountRules"
                 :hint="customAmountHint"
-                v-if="paymentOutlet.customAmountAllowed && category === 'Regular'"
+                v-if="
+                  paymentOutlet.customAmountAllowed && category === 'Regular'
+                "
                 @click:append="onProductSelect('0')"
               ></v-text-field>
             </v-form>
 
             <!-- Product Options -->
-            <v-list id="product-list" max-height="60vh" two-line v-if="products">
+            <v-list
+              id="product-list"
+              max-height="60vh"
+              two-line
+              v-if="products"
+            >
               <v-list-item
                 v-for="product in products"
                 :key="product.id"
@@ -84,8 +98,13 @@
               >
                 <!-- Product Info -->
                 <v-list-item-content>
-                  <v-list-item-title class="title" v-text="product.productCode"></v-list-item-title>
-                  <v-list-item-subtitle v-text="product.description"></v-list-item-subtitle>
+                  <v-list-item-title
+                    class="title"
+                    v-text="product.productCode"
+                  ></v-list-item-title>
+                  <v-list-item-subtitle
+                    v-text="product.description"
+                  ></v-list-item-subtitle>
                 </v-list-item-content>
                 <!-- Show Description -->
                 <v-list-item-action>
@@ -100,31 +119,50 @@
             <v-dialog v-model="confirmDialog" v-if="product" max-width="300">
               <v-card :loading="confirmCardLoading">
                 <!-- Outlet image -->
-                <v-img class="align-end" max-height="150px" :src="paymentOutlet.logoUrl" contain></v-img>
+                <v-img
+                  class="align-end"
+                  max-height="150px"
+                  :src="paymentOutlet.logoUrl"
+                  contain
+                ></v-img>
                 <!-- Title -->
                 <v-card-title>
                   <v-spacer></v-spacer>
                   <span class="headline">+63{{ number }}</span>
                 </v-card-title>
-                <v-card-subtitle class="text-right">{{ product.productCode }}</v-card-subtitle>
+                <v-card-subtitle class="text-right">{{
+                  product.productCode
+                }}</v-card-subtitle>
                 <!-- Body -->
-                <v-card-text v-if="!orderConfiremed">{{ product.name }}. {{ product.description }}</v-card-text>
+                <v-card-text v-if="!orderConfiremed"
+                  >{{ product.name }}. {{ product.description }}</v-card-text
+                >
                 <v-card-text v-else>
                   <span class="text-h4">Success!</span>
                   <v-icon>check-circle-outline</v-icon>
                   <br />Thank you for using
                   <span class="font-weight-light">Load</span>
-                  <span class="font-weight-bold">Ninja</span>. You will receive notification shortly.
+                  <span class="font-weight-bold">Ninja</span>. You will receive
+                  notification shortly.
                 </v-card-text>
                 <!-- Buttons -->
                 <v-card-actions v-if="!orderConfiremed">
                   <v-spacer></v-spacer>
-                  <v-btn color="grey darken-1" text @click="confirmDialog = false">Cancel</v-btn>
-                  <v-btn color="green darken-1" text @click="onConfirmBuy">Confirm</v-btn>
+                  <v-btn
+                    color="grey darken-1"
+                    text
+                    @click="confirmDialog = false"
+                    >Cancel</v-btn
+                  >
+                  <v-btn color="green darken-1" text @click="onConfirmBuy"
+                    >Confirm</v-btn
+                  >
                 </v-card-actions>
                 <v-card-actions v-else>
                   <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" text @click="onTransactionDone">Done</v-btn>
+                  <v-btn color="green darken-1" text @click="onTransactionDone"
+                    >Done</v-btn
+                  >
                 </v-card-actions>
               </v-card>
 

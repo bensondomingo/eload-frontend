@@ -1,7 +1,11 @@
 <template>
   <v-card v-bind:color="cardData.color" v-bind:dark="cardData.isDark">
     <v-card-title class="headline">
-      <v-progress-circular indeterminate color="white" v-if="loading"></v-progress-circular>
+      <v-progress-circular
+        indeterminate
+        color="white"
+        v-if="loading"
+      ></v-progress-circular>
       <span v-else>
         <!-- <v-icon>mdi-currency-php</v-icon> -->
         P<span v-text="value"></span>

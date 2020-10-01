@@ -11,12 +11,16 @@ export default new Vuex.Store({
     authDetails: [],
     user: {},
     profile: {},
-    token: localStorage.getItem('token') || '',
+    token: localStorage.getItem('token') || null,
     retailers: [],
     transactions: [],
     fetchTransactions: false,
     cardLoading: false,
-    pageBottom: false
+    pageBottom: false,
+    fcmConfig: {},
+    fcmToken: '',
+    notificationTray: [],
+    newTransaction: null
   },
 
   getters: {
@@ -63,7 +67,11 @@ export default new Vuex.Store({
     fetchTransactions: state => state.fetchTransactions,
     cardLoading: state => state.fetchTransactions,
     transactions: state => state.transactions,
-    pageBottom: state => state.pageBottom
+    pageBottom: state => state.pageBottom,
+    fcmConfig: state => state.fcmConfig,
+    fcmToken: state => state.fcmToken,
+    notificationTray: state => state.notificationTray,
+    newTransaction: state => state.newTransaction
   },
 
   mutations: {
@@ -81,7 +89,8 @@ export default new Vuex.Store({
     reset_state(state) {
       state.user = {};
       state.profiles = {};
-      state.token = '';
+      state.token = null;
+      localStorage.clear();
       state.retailers = [];
       state.transactions = [];
       state.cardLoading = false;
@@ -136,6 +145,33 @@ export default new Vuex.Store({
 
     scrolledToBottom(state, value) {
       state.pageBottom = value;
+    },
+
+    SET_FCM_CONFIG(state, value) {
+      state.fcmConfig = value;
+    },
+
+    SET_FCM_TOKEN(state, value) {
+      state.fcmToken = value;
+    },
+
+    PUSH_NEW_NOTIFICATION(state, value) {
+      state.notificationTray.push(value);
+      if (value.notification_type === 'NEW_TRANSACTION') {
+        const newTransaction = { ...value };
+        delete newTransaction.notification_type;
+        state.newTransaction = newTransaction;
+      }
+    },
+
+    CLEAR_NOTIFICATION_TRAY(state) {
+      state.newTransaction = null;
+    },
+
+    CLEAR_NEW_TRANSACTION(state) {
+      // New transaction was set everytime a new push notification 
+      // with 'NEW_TRANSACTION' type was received
+      state.newTransaction = null;
     }
   },
 
@@ -151,6 +187,23 @@ export default new Vuex.Store({
           })
           .catch(err => {
             reject(err);
+          });
+      });
+    },
+
+    fetchFCMConfig({ commit }) {
+      return new Promise((resolve, reject) => {
+        axios
+          .get('/fcm/api/fcm-config/')
+          .then(resp => {
+            commit('SET_FCM_CONFIG', resp.data);
+            resolve(resp.data);
+            return resp.data;
+          })
+          .catch(err => {
+            console.log(err);
+            reject(err);
+            return err;
           });
       });
     },

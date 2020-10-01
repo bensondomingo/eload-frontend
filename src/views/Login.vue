@@ -5,9 +5,15 @@
         <v-card flat :loading="loading">
           <v-card-title class="headline justify-center">Login</v-card-title>
           <v-card-text>
-            <v-container v-if="nonFieldErrors ? !!nonFieldErrors.length : false">
+            <v-container
+              v-if="nonFieldErrors ? !!nonFieldErrors.length : false"
+            >
               <v-row dense>
-                <v-col v-for="(err, index) in nonFieldErrors" :key="index" cols="12">
+                <v-col
+                  v-for="(err, index) in nonFieldErrors"
+                  :key="index"
+                  cols="12"
+                >
                   <v-alert type="error">{{ err }}</v-alert>
                 </v-col>
               </v-row>
@@ -38,7 +44,8 @@
               block
               depressed
               rounded
-            >Submit</v-btn>
+              >Submit</v-btn
+            >
           </v-card-text>
         </v-card>
       </v-col>
@@ -127,5 +134,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

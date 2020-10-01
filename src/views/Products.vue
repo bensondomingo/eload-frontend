@@ -8,7 +8,9 @@
       >
         <v-list-item-content>
           <v-list-item-title v-text="product.id"></v-list-item-title>
-          <v-list-item-subtitle v-text="product.name + ' | ' + product.validity"></v-list-item-subtitle>
+          <v-list-item-subtitle
+            v-text="product.name + ' | ' + product.validity"
+          ></v-list-item-subtitle>
         </v-list-item-content>
 
         <v-list-item-action class="flex-row align align-center">
@@ -37,8 +39,14 @@
           <v-form flat>
             <v-text-field :value="product.name" label="Name"></v-text-field>
             <v-text-field :value="product.id" label="Code"></v-text-field>
-            <v-text-field :value="product.outlet_id" label="Outlet"></v-text-field>
-            <v-text-field :value="product.validity" label="Validity"></v-text-field>
+            <v-text-field
+              :value="product.outlet_id"
+              label="Outlet"
+            ></v-text-field>
+            <v-text-field
+              :value="product.validity"
+              label="Validity"
+            ></v-text-field>
             <v-textarea
               :value="product.description"
               label="Description"
@@ -55,8 +63,11 @@
           <v-btn @click="onDetailClose" text>Close</v-btn>
           <v-btn
             @click="onProductUpdate"
-            :disabled="product.category === newCategory && product.is_active === newState"
-          >Update</v-btn>
+            :disabled="
+              product.category === newCategory && product.is_active === newState
+            "
+            >Update</v-btn
+          >
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -157,5 +168,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>

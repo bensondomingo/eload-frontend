@@ -6,10 +6,9 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 import NewTransactionForm from '@/components/forms/NewTransactionForm';
 import TransactionList from '@/components/TheTransactionList';
-// import { TransactionItem } from '@/assets/scripts/utils.js';
 
 export default {
   name: 'Home',
@@ -32,7 +31,7 @@ export default {
   }),
 
   computed: {
-    ...mapGetters(['pageBottom']),
+    ...mapGetters(['pageBottom', 'newTransaction']),
 
     phoneNumberRules() {
       const rules = [];
@@ -50,10 +49,18 @@ export default {
       if (newValue) {
         this.onLoadMore();
       }
+    },
+
+    newTransaction(newValue) {
+      if (!newValue) return;
+      this.transactions.splice(0, 0, newValue);
+      this.CLEAR_NEW_TRANSACTION();
     }
   },
 
   methods: {
+    ...mapMutations(['CLEAR_NEW_TRANSACTION']),
+
     fetchTransactions(queryParams = { limit: 10, offset: 0 }) {
       const endpoint = '/cphapp/api/transactions/';
       this.$http
@@ -82,9 +89,11 @@ export default {
   },
 
   created() {
+    document.title = 'Home | ' + document.title;
     if (!this.transactions.length) {
       this.fetchTransactions();
-      this.loadOffset += 10;
+      this.loadOffset += 1;
+      0;
     }
   }
 };

@@ -1,14 +1,16 @@
 <template>
   <v-content>
-    <h1 class="display-1">dummy page -- {{ $router.currentRoute.name}}</h1>
+    <h1 class="display-1">dummy page -- {{ $router.currentRoute.name }}</h1>
 
     <v-row dense>
-      <v-col v-for="cardData in cardObjects" :key="cardData.ref" cols="12" sm="6" md="3">
-        <SummaryCard
-          ref="saleCards"
-          :key="cardData.ref"
-          :cardData="cardData"
-        />
+      <v-col
+        v-for="cardData in cardObjects"
+        :key="cardData.ref"
+        cols="12"
+        sm="6"
+        md="3"
+      >
+        <SummaryCard ref="saleCards" :key="cardData.ref" :cardData="cardData" />
       </v-col>
     </v-row>
   </v-content>
@@ -47,5 +49,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
