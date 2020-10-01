@@ -18,7 +18,7 @@ export default new Vuex.Store({
     cardLoading: false,
     pageBottom: false,
     fcmConfig: {},
-    fcmToken: '',
+    fcmToken: null,
     notificationTray: [],
     newTransaction: null
   },
