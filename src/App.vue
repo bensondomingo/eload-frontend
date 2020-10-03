@@ -4,6 +4,26 @@
     <v-main>
       <v-container>
         <router-view></router-view>
+        <div class="text-center ma-2">
+          <v-btn dark @click="snackbar = true">
+            Open Snackbar
+          </v-btn>
+
+          <v-snackbar
+            v-model="snackbar"
+            :color="notification.status.toLocaleLowerCase()"
+          >
+            {{ notification.title }}
+            <template v-slot:action="{ attrs }">
+              <v-btn v-bind="attrs" @click="snackbar = false" icon>
+                <v-icon v-if="notification.status == 'SUCCESS'"
+                  >mdi-checkbox-marked-circle</v-icon
+                >
+                <v-icon v-else>mdi-alert-circle-outline</v-icon>
+              </v-btn>
+            </template>
+          </v-snackbar>
+        </div>
       </v-container>
     </v-main>
   </v-app>
@@ -11,6 +31,7 @@
 
 <script>
 import Navbar from '@/components/Navbar';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'App',
@@ -19,8 +40,31 @@ export default {
     return {
       transactions: [],
       showLogin: false,
-      pageBottom: true
+      pageBottom: true,
+      snackbar: false,
+      notification: {
+        title: '',
+        status: 'SUCCESS'
+      }
     };
+  },
+
+  computed: {
+    ...mapGetters(['notificationTray'])
+  },
+
+  watch: {
+    notificationTray(newValue) {
+      // notificationTray is an array
+      console.log('notificationTray ', this.notificationTray);
+      if (!newValue.length) return;
+      const newNotification = newValue.slice('-1').pop();
+      this.notification = {
+        title: newNotification.notification.title,
+        status: newNotification.data.notification_status
+      };
+      this.snackbar = true;
+    }
   },
 
   methods: {

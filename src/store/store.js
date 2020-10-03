@@ -157,9 +157,11 @@ export default new Vuex.Store({
 
     PUSH_NEW_NOTIFICATION(state, value) {
       state.notificationTray.push(value);
-      if (value.notification_type === 'NEW_TRANSACTION') {
-        const newTransaction = { ...value };
+      if (value.data.notification_type === 'NEW_TRANSACTION') {
+        // Get data property only
+        const newTransaction = { ...value.data };
         delete newTransaction.notification_type;
+        delete newTransaction.notification_status;
         state.newTransaction = newTransaction;
       }
     },

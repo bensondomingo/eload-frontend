@@ -53,6 +53,7 @@ export default {
 
     newTransaction(newValue) {
       if (!newValue) return;
+      console.log('New transaction from notification data ', newValue)
       this.transactions.splice(0, 0, newValue);
       this.CLEAR_NEW_TRANSACTION();
     }

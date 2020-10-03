@@ -125,15 +125,17 @@ export default {
     this.$messaging.onMessage(payload => {
       // What happens when a notification should be done here
       console.log('onMessage', payload);
-      if (payload.data) {
-        this.PUSH_NEW_NOTIFICATION(payload.data);
-        console.log(this.notificationTray);
-        console.log('New transaction', this.newTransaction);
+      const { notification, data } = payload;
+      console.log('Notification ', notification);
+      console.log('Data ', data);
+      
+      this.PUSH_NEW_NOTIFICATION({ notification, data });
+      console.log(this.notificationTray);
+      console.log('New transaction', this.newTransaction);
 
-        // Show notification
-        const { title, body, icon } = payload.notification;
-        new Notification(title, { body, icon, vibrate: [200, 100, 200] });
-      }
+      // Show notification
+      const { title, body, icon } = payload.notification;
+      new Notification(title, { body, icon, vibrate: [200, 100, 200] });
     });
   }
 };
