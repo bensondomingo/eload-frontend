@@ -5,10 +5,6 @@
       <v-container>
         <router-view></router-view>
         <div class="text-center ma-2">
-          <v-btn dark @click="snackbar = true">
-            Open Snackbar
-          </v-btn>
-
           <v-snackbar
             v-model="snackbar"
             :color="notification.status.toLocaleLowerCase()"
