@@ -8,6 +8,7 @@
           <v-snackbar
             v-model="snackbar"
             :color="notification.status.toLocaleLowerCase()"
+            timeout="10000"
           >
             {{ notification.title }}
             <template v-slot:action="{ attrs }">
@@ -106,6 +107,9 @@ export default {
                     err,
                     'Request cannot be performed right now. Please check your network connection.'
                   );
+                })
+                .finally(() => {
+                  location.reload();
                 });
             })
             .catch(err => {
