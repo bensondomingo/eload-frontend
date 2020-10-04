@@ -171,7 +171,7 @@ export default new Vuex.Store({
     },
 
     CLEAR_NEW_TRANSACTION(state) {
-      // New transaction was set everytime a new push notification 
+      // New transaction was set everytime a new push notification
       // with 'NEW_TRANSACTION' type was received
       state.newTransaction = null;
     }
@@ -243,6 +243,7 @@ export default new Vuex.Store({
           .then(authResp => {
             const token = authResp.data.key;
             commit({ type: 'auth_success', token: token });
+            location.reload();
             resolve(token);
           })
           .catch(err => {

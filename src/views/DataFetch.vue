@@ -87,56 +87,51 @@ export default {
         }
       });
 
-    if (process.env.NODE_ENV !== 'production') {
-      console.log('Development mode, skip service worker registration');
-      return;
-    }
+    if (
+      process.env.NODE_ENV === 'production' &&
+      Notification.permission !== 'denied'
+    ) {
+      // Fetch FCM config then register service worker
+      console.log('Production environment, configure fcm');
+      // Request for token
+      this.$messaging
+        .requestPermission()
+        .then(() => {
+          console.log('Permission granted!');
+          return this.$messaging.getToken();
+        })
+        .then(token => {
+          console.log('Persisting FCM token: ', token);
+          this.$http
+            .post('/fcm/api/fcmdevices/', { token })
+            .then(resp => {
+              console.log(resp);
+              this.SET_FCM_TOKEN(resp.data);
+              console.log(this.fcmToken);
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => {
+          this.SET_FCM_TOKEN({});
+          console.log('Permission denied', err);
+        });
 
-    if (Notification.permission === 'denied') {
-      console.log('Notification permission is denied.');
-      return;
-    }
+      this.$messaging.onMessage(payload => {
+        // What happens when a notification should be done here
+        console.log('onMessage', payload);
+        const { notification, data } = payload;
+        console.log('Notification ', notification);
+        console.log('Data ', data);
 
-    // Fetch FCM config then register service worker
-    console.log('Production environment, configure fcm');
-    // Request for token
-    this.$messaging
-      .requestPermission()
-      .then(() => {
-        console.log('Permission granted!');
-        return this.$messaging.getToken();
-      })
-      .then(token => {
-        console.log('Persisting FCM token: ', token);
-        this.$http
-          .post('/fcm/api/fcmdevices/', { token })
-          .then(resp => {
-            console.log(resp);
-            this.SET_FCM_TOKEN(resp.data);
-            console.log(this.fcmToken);
-          })
-          .catch(err => console.log(err));
-      })
-      .catch(err => {
-        this.SET_FCM_TOKEN({});
-        console.log('Permission denied', err);
+        this.PUSH_NEW_NOTIFICATION({ notification, data });
+        console.log(this.notificationTray);
+        console.log('New transaction', this.newTransaction);
+
+        // Show notification
+        const { title, body, icon } = payload.notification;
+        new Notification(title, { body, icon, vibrate: [200, 100, 200] });
       });
-
-    this.$messaging.onMessage(payload => {
-      // What happens when a notification should be done here
-      console.log('onMessage', payload);
-      const { notification, data } = payload;
-      console.log('Notification ', notification);
-      console.log('Data ', data);
-      
-      this.PUSH_NEW_NOTIFICATION({ notification, data });
-      console.log(this.notificationTray);
-      console.log('New transaction', this.newTransaction);
-
-      // Show notification
-      const { title, body, icon } = payload.notification;
-      new Notification(title, { body, icon, vibrate: [200, 100, 200] });
-    });
+    }
   }
 };
 </script>
