@@ -21,6 +21,7 @@
 
 <script>
 import { mapMutations, mapGetters } from 'vuex';
+import Cookies from 'js-cookie';
 
 export default {
   name: 'DummyView',
@@ -50,9 +51,14 @@ export default {
   },
 
   created() {
+    // Set CSRF token
+    console.log('CSRF token ', Cookies.get('csrftoken'));
+    this.$http.defaults.headers['X-CSRFTOKEN'] = Cookies.get('csrftoken');
+    console.log('Axios headers', this.$http.defaults.headers);
+
     this.loading = true;
     this.redirect = this.$router.currentRoute.query.redirect;
-
+    
     this.$store
       .dispatch('fetchUser')
       .then(userObj => {

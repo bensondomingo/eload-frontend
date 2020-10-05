@@ -46,9 +46,13 @@ if (process.env.NODE_ENV === 'production') {
     workboxPluginMode: 'InjectManifest',
     workboxOptions: {
       // swSrc is required in InjectManifest mode.
-      swSrc: 'src/firebase-messaging-sw.js',
+      swSrc: 'src/firebase-messaging-sw.js'
       // ...other Workbox options...
     }
+  };
+
+  exp.configureWebpack = {
+    devtool: ''
   };
 }
 

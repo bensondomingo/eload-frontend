@@ -4,23 +4,22 @@
     <v-main>
       <v-container>
         <router-view></router-view>
-        <div class="text-center ma-2">
-          <v-snackbar
-            v-model="snackbar"
-            :color="notification.status.toLocaleLowerCase()"
-            timeout="10000"
-          >
-            {{ notification.title }}
-            <template v-slot:action="{ attrs }">
-              <v-btn v-bind="attrs" @click="snackbar = false" icon>
-                <v-icon v-if="notification.status == 'SUCCESS'"
-                  >mdi-checkbox-marked-circle</v-icon
-                >
-                <v-icon v-else>mdi-alert-circle-outline</v-icon>
-              </v-btn>
-            </template>
-          </v-snackbar>
-        </div>
+        <v-snackbar
+          v-model="snackbar"
+          :color="notification.status.toLocaleLowerCase()"
+          timeout="10000"
+          class="pb-14"
+        >
+          {{ notification.title }}
+          <template v-slot:action="{ attrs }">
+            <v-btn v-bind="attrs" @click="snackbar = false" icon>
+              <v-icon v-if="notification.status == 'SUCCESS'"
+                >mdi-checkbox-marked-circle</v-icon
+              >
+              <v-icon v-else>mdi-alert-circle-outline</v-icon>
+            </v-btn>
+          </template>
+        </v-snackbar>
       </v-container>
     </v-main>
   </v-app>
@@ -99,6 +98,7 @@ export default {
                     console.log(resp);
                     this.$store.commit('reset_state');
                     console.log(this.$store.getters.isAuthenticated);
+                    document.cookie = '';
                     this.$http.defaults.headers.common['Authorization'] = '';
                     this.$router.push({ name: 'login' });
                     console.log('Successful logout!');
@@ -108,9 +108,6 @@ export default {
                       err,
                       'Request cannot be performed right now. Please check your network connection.'
                     );
-                  })
-                  .finally(() => {
-                    location.reload();
                   });
               })
               .catch(err => {
@@ -131,6 +128,7 @@ export default {
             console.log(resp);
             this.$store.commit('reset_state');
             console.log(this.$store.getters.isAuthenticated);
+            document.cookie = '';
             this.$http.defaults.headers.common['Authorization'] = '';
             this.$router.push({ name: 'login' });
             console.log('Successful logout!');
@@ -141,9 +139,6 @@ export default {
               'Request cannot be performed right now. Please check your network connection.'
             );
           })
-          .finally(() => {
-            location.reload();
-          });
       }
     }
   }

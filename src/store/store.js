@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-
 import { axios } from '@/assets/scripts/api.service';
 
 Vue.use(Vuex);
@@ -243,7 +242,6 @@ export default new Vuex.Store({
           .then(authResp => {
             const token = authResp.data.key;
             commit({ type: 'auth_success', token: token });
-            location.reload();
             resolve(token);
           })
           .catch(err => {
