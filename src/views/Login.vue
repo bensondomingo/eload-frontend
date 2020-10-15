@@ -81,12 +81,12 @@ export default {
   },
   methods: {
     onSubmit() {
-      this.loading = 'primary';
-      this.nonFieldErrors = [];
       if (!this.$refs.loginForm.validate()) {
         return;
       }
 
+      this.loading = 'primary';
+      this.nonFieldErrors = [];
       this.$store
         .dispatch('login', {
           username: this.username,
