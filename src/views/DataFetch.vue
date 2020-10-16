@@ -132,10 +132,6 @@ export default {
         this.PUSH_NEW_NOTIFICATION({ notification, data });
         console.log(this.notificationTray);
         console.log('New transaction', this.newTransaction);
-
-        // Show notification
-        const { title, body, icon } = payload.notification;
-        new Notification(title, { body, icon, vibrate: [200, 100, 200] });
       });
     }
   }

@@ -8,7 +8,7 @@
           v-model="snackbar"
           :color="notification.status.toLocaleLowerCase()"
           timeout="10000"
-          class="pb-14"
+          class="pb-16"
         >
           {{ notification.title }}
           <template v-slot:action="{ attrs }">

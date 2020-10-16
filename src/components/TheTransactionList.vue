@@ -1,5 +1,5 @@
 <template>
-  <div v-if="transactions.length">
+  <div v-if="transactions.length" class="pb-16">
     <v-row dense v-if="showList">
       <v-col
         class="mb-1 pa-0"
