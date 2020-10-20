@@ -10,7 +10,7 @@ const exp = {
       .plugin('BundleTracker')
       .use(BundleTracker, [{ filename: './webpack-stats.json' }]);
 
-    config.output.filename('bundle.js');
+    config.output.filename('bundle.[hash].js');
 
     config.optimization.splitChunks(false);
 
@@ -26,6 +26,17 @@ const exp = {
       .https(false)
       .disableHostCheck(true)
       .headers({ 'Access-Control-Allow-Origin': ['*'] });
+
+    if (process.env.NODE_ENV === 'production') {
+      config.plugin('html')
+        .tap(args => {
+          args[0].title = 'LoadNinja';
+          args[0].scriptLoading = 'defer';
+          args[0].inject = false;
+          args[0].hash = true;
+          return args;
+        })
+    }
   }
 };
 
@@ -33,8 +44,8 @@ if (process.env.NODE_ENV === 'production') {
   exp.publicPath = '/static/';
   exp.css = {
     extract: {
-      filename: 'bundle.css',
-      chunkFilename: '[name].css',
+      filename: 'bundle.[hash].css',
+      chunkFilename: '[name].[hash].css',
       publicPath: '/static/'
     }
   };
