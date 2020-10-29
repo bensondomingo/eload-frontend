@@ -3,7 +3,9 @@
     <Navbar @logout="logout" />
     <v-main>
       <v-container>
-        <router-view></router-view>
+        <transition name="scroll-x-reverse-transition">
+          <router-view></router-view>
+        </transition>
         <v-snackbar
           v-model="snackbar"
           :color="notification.status.toLocaleLowerCase()"
@@ -138,7 +140,7 @@ export default {
               err,
               'Request cannot be performed right now. Please check your network connection.'
             );
-          })
+          });
       }
     }
   }
