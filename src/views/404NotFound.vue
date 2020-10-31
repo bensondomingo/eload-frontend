@@ -4,7 +4,11 @@
 
 <script>
 export default {
-  name: 'NotFound'
+  name: 'NotFound',
+
+  created() {
+    document.title = this.$options.name + ' | ' + this.$documentTitle;
+  }
 };
 </script>
 

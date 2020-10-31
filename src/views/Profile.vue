@@ -14,6 +14,10 @@ export default {
   data: () => ({}),
   computed: {
     ...mapGetters(['user'])
+  },
+
+  created() {
+    document.title = this.$options.name + ' | ' + this.$documentTitle;
   }
 };
 </script>

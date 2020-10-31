@@ -333,6 +333,10 @@ export default {
     // Fetch data based on selected range
     let queryObject = range.queryObject;
     this.fetchTransactions(queryObject);
+  },
+
+  created() {
+    document.title = this.$options.name + ' | ' + this.$documentTitle;
   }
 };
 </script>

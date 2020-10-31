@@ -90,7 +90,7 @@ export default {
   },
 
   created() {
-    document.title = 'Home | ' + document.title;
+    document.title = this.$options.name + ' | ' + this.$documentTitle;
     if (!this.transactions.length) {
       this.fetchTransactions();
       this.loadOffset += 1;

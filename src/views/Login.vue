@@ -127,6 +127,7 @@ export default {
     }
   },
   created() {
+    document.title = this.$options.name + ' | ' + this.$documentTitle;
     if (this.$store.getters.isAuthenticated) {
       this.$router.replace({ name: 'datafetch' });
     }

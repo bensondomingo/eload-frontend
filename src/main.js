@@ -9,6 +9,8 @@ import { register } from 'register-service-worker';
 import * as firebase from 'firebase/app';
 import 'firebase/messaging';
 
+Vue.prototype.$documentTitle = 'LoadNinja';
+
 Vue.prototype.$http = axios;
 const token = localStorage.getItem('token');
 if (token) {

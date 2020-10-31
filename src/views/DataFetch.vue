@@ -51,6 +51,7 @@ export default {
   },
 
   created() {
+    document.title = this.$documentTitle;
     // Set CSRF token
     console.log('CSRF token ', Cookies.get('csrftoken'));
     this.$http.defaults.headers['X-CSRFTOKEN'] = Cookies.get('csrftoken');
