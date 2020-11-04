@@ -106,7 +106,6 @@
                     v-text="product.description"
                   ></v-list-item-subtitle>
                 </v-list-item-content>
-                
               </v-list-item>
             </v-list>
 
@@ -358,6 +357,10 @@ export default {
             const errData = err.response.data;
             if (errData.errors && errData.errors instanceof Array) {
               this.orderErrors.push(...errData.errors);
+            } else {
+              this.orderErrors.push(
+                "It's not you, it's us! Something went wrong while we're trying to process your order. Please try again later."
+              );
             }
           } else {
             this.orderErrors.push(
