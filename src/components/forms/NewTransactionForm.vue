@@ -100,23 +100,18 @@
                 <v-list-item-content>
                   <v-list-item-title
                     class="title"
-                    v-text="product.productCode"
+                    v-text="product.name"
                   ></v-list-item-title>
                   <v-list-item-subtitle
                     v-text="product.description"
                   ></v-list-item-subtitle>
                 </v-list-item-content>
-                <!-- Show Description -->
-                <v-list-item-action>
-                  <v-btn icon @click.prevent.stop="onShowTooltip">
-                    <v-icon color="grey lighten-1">mdi-information</v-icon>
-                  </v-btn>
-                </v-list-item-action>
+                
               </v-list-item>
             </v-list>
 
             <!-- Confirmation dialog -->
-            <v-dialog v-model="confirmDialog" v-if="product" max-width="300">
+            <v-dialog v-model="confirmDialog" v-if="product" max-width="500">
               <v-card :loading="confirmCardLoading">
                 <!-- Outlet image -->
                 <v-img
@@ -138,12 +133,20 @@
                   >{{ product.name }}. {{ product.description }}</v-card-text
                 >
                 <v-card-text v-else>
-                  <span class="text-h4">Success!</span>
-                  <v-icon>check-circle-outline</v-icon>
-                  <br />Thank you for using
-                  <span class="font-weight-light">Load</span>
-                  <span class="font-weight-bold">Ninja</span>. You will receive
-                  notification shortly.
+                  <v-alert v-if="orderSuccess" type="success" prominent text>
+                    Transaction successful! Thank you for using
+                    <span class="font-weight-light">Load</span>
+                    <span class="font-weight-bold">Ninja</span>. You'll get
+                    notified shortly.
+                  </v-alert>
+                  <v-alert
+                    v-for="(err, index) in orderErrors"
+                    :key="index"
+                    type="error"
+                    prominent
+                    text
+                    >{{ err }}</v-alert
+                  >
                 </v-card-text>
                 <!-- Buttons -->
                 <v-card-actions v-if="!orderConfiremed">
@@ -160,8 +163,11 @@
                 </v-card-actions>
                 <v-card-actions v-else>
                   <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" text @click="onTransactionDone"
-                    >Done</v-btn
+                  <v-btn
+                    :color="orderSuccess ? 'success' : 'error' + ' darken-1'"
+                    text
+                    @click="onTransactionDone"
+                    >{{ orderSuccess ? 'Done' : 'Try again later' }}</v-btn
                   >
                 </v-card-actions>
               </v-card>
@@ -195,7 +201,8 @@ export default {
     customAmount: null,
     confirmDialog: false,
     confirmCardLoading: false,
-    orderConfiremed: false
+    orderConfiremed: false,
+    orderErrors: []
   }),
 
   computed: {
@@ -232,6 +239,10 @@ export default {
     customAmountHint() {
       if (!this.paymentOutlet.customAmountAllowed) return '';
       return `Enter custom amount [${this.customAmountLimit.minimum} - ${this.customAmountLimit.maximum}]`;
+    },
+
+    orderSuccess() {
+      return this.orderErrors.length === 0;
     }
   },
 
@@ -341,12 +352,23 @@ export default {
         .post(endpoint, data)
         .then(resp => {
           console.log(resp);
-          this.orderConfiremed = true;
         })
         .catch(err => {
-          console.log(err);
+          if (err.response.status === 400) {
+            const errData = err.response.data;
+            if (errData.errors && errData.errors instanceof Array) {
+              this.orderErrors.push(...errData.errors);
+            }
+          } else {
+            this.orderErrors.push(
+              "It's not you, it's us! Something went wrong while we're trying to process your order. Please try again later."
+            );
+          }
         })
-        .finally(() => (this.confirmCardLoading = false));
+        .finally(() => {
+          this.orderConfiremed = true;
+          this.confirmCardLoading = false;
+        });
     },
 
     onCloseProductSelect() {
