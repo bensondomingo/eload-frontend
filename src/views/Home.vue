@@ -19,15 +19,15 @@ export default {
     phoneNumber: '',
     phoneNumberErrors: [],
     rules: {
-      required: value => !!value || 'Required.',
-      isvalid: v =>
-        (v.length == 11 && v.startsWith('0')) || 'Phone number is invalid'
+      required: (value) => !!value || 'Required.',
+      isvalid: (v) =>
+        (v.length == 11 && v.startsWith('0')) || 'Phone number is invalid',
     },
     loading: false,
     e1: 1,
     loadOffset: 0,
     transactions: [],
-    newTransactionDialog: false
+    newTransactionDialog: false,
   }),
 
   computed: {
@@ -35,12 +35,12 @@ export default {
 
     phoneNumberRules() {
       const rules = [];
-      const required = v => !!v || 'Phone number is required';
-      const valid = v =>
+      const required = (v) => !!v || 'Phone number is required';
+      const valid = (v) =>
         (v.length == 11 && v.startsWith('0')) || 'Phone number is invalid';
       rules.push(required, valid);
       return rules;
-    }
+    },
   },
 
   watch: {
@@ -53,10 +53,14 @@ export default {
 
     newTransaction(newValue) {
       if (!newValue) return;
-      console.log('New transaction from notification data ', newValue)
-      this.transactions.splice(0, 0, newValue);
+      console.log('New transaction from notification data ', newValue);
+      const transactions = this.transactions.slice();
+      const index = transactions.findIndex((el) => el.id === newValue.id);
+      if (index === -1) transactions.splice(0, 0, newValue);
+      else transactions.splice(index, 1, newValue);
+      this.transactions = transactions;
       this.CLEAR_NEW_TRANSACTION();
-    }
+    },
   },
 
   methods: {
@@ -66,11 +70,11 @@ export default {
       const endpoint = '/cphapp/api/transactions/';
       this.$http
         .get(endpoint, { params: queryParams })
-        .then(resp => {
+        .then((resp) => {
           console.log(resp);
           this.transactions.push(...resp.data.results);
         })
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
     },
 
     onLoadMore() {
@@ -86,7 +90,7 @@ export default {
 
     onScroll() {
       console.log('Scroll');
-    }
+    },
   },
 
   created() {
@@ -96,7 +100,7 @@ export default {
       this.loadOffset += 1;
       0;
     }
-  }
+  },
 };
 </script>
 

@@ -10,23 +10,45 @@ export default class CardObject {
 }
 
 class TransactionItem {
+  #title;
+  #subtitle;
+  #status;
   constructor(transaction) {
     this.id = transaction.id;
-    this.title =
-      transaction.transaction_type == 'sellorder'
-        ? transaction.phone_number.replace('+63', '0')
-        : 'CASH IN';
+    this.parseTitle(transaction);
+    this.parseSubtitle(transaction);
+    this.status = transaction.status;
+    this.date = new Date(transaction.transaction_date).toLocaleString();
+    this.visible = true;
+  }
+
+  get title() {
+    return this.#title;
+  }
+  parseTitle(transaction) {
+    if (transaction.transaction_type === 'sellorder')
+      this.#title = transaction.phone_number.replace('+63', '0');
+    else this.#title = 'CASH_IN';
+  }
+
+  get subtitle() {
+    return this.#subtitle;
+  }
+  parseSubtitle(transaction) {
     const subtitle =
       transaction.transaction_type == 'sellorder'
         ? transaction.network.split(' ')[0]
         : transaction.payment_method;
-    this.subtitle = subtitle + ' / P' + transaction.amount;
-    this.status =
-      transaction.status === 'settled' || transaction.status === 'released'
-        ? 'success'
-        : 'refunded';
-    this.date = new Date(transaction.transaction_date).toLocaleString();
-    this.visible = true;
+    this.#subtitle = `P${transaction.amount} - ${subtitle}`;
+  }
+
+  get status() {
+    return this.#status;
+  }
+  set status(value) {
+    if (value === 'settled' || value === 'released') this.#status = 'success';
+    else if (value === 'pending_payment') this.#status = 'pending';
+    else this.#status = 'error';
   }
 
   show(value) {

@@ -110,6 +110,7 @@
     <TransactionList
       :transactions="filteredTransactions"
       :pageBottom="bottom"
+      style="padding: 5px; margin-top: 10px"
     />
   </v-container>
 </template>
@@ -129,12 +130,12 @@ const transactionType = [
   DEFAULT_TRANSACTION_TYPE_FILTER,
   {
     label: 'SELL',
-    value: 'sellorder'
+    value: 'sellorder',
   },
   {
     label: 'CASH IN',
-    value: 'buyorder'
-  }
+    value: 'buyorder',
+  },
 ];
 
 export default {
@@ -142,7 +143,7 @@ export default {
   components: {
     SummaryCardList,
     CustomRangePicker,
-    TransactionList
+    TransactionList,
   },
 
   data() {
@@ -160,7 +161,7 @@ export default {
           : dateRangeList[0].name,
       selectRangeErrors: [],
       filteredTransactions: [],
-      rangeOptions: dateRangeList
+      rangeOptions: dateRangeList,
     };
   },
 
@@ -169,7 +170,7 @@ export default {
 
     rangeSelectorMsg() {
       const selectedRange = this.rangeOptions.find(
-        el => el.name === this.selectedRange
+        (el) => el.name === this.selectedRange
       );
       return selectedRange.rangeStr;
     },
@@ -178,7 +179,7 @@ export default {
       return this.isStaff
         ? [DEFAULT_RETAILER_FILTER, ...this.$store.getters.retailers]
         : null;
-    }
+    },
   },
 
   watch: {
@@ -191,7 +192,7 @@ export default {
       if (newValue.user === 'DEFAULT_RETAILER_FILTER') {
         this.transactionTypeFilter = DEFAULT_TRANSACTION_TYPE_FILTER.value;
       }
-    }
+    },
   },
 
   methods: {
@@ -202,7 +203,7 @@ export default {
       try {
         this.$store.commit('fetchTransactions', true);
         const response = await this.$http.get(endpoint, {
-          params: queryParams
+          params: queryParams,
         });
         responseData = response.data;
       } catch (error) {
@@ -212,7 +213,7 @@ export default {
             this.$store.commit('auth_signout', error.response.data.detail);
             this.$router.push({
               name: 'login',
-              query: { redirect: '/' }
+              query: { redirect: '/' },
             });
           } else {
             this.selectRangeErrors.push(
@@ -241,13 +242,13 @@ export default {
           uri
             .split('?')[1]
             .split('&')
-            .map(el => el.split('='))
+            .map((el) => el.split('='))
         );
         this.fetchTransactions(queryParams);
       } else {
         this.$store.commit({
           type: 'transaction_update',
-          transactions: transactionsCache
+          transactions: transactionsCache,
         });
         transactionsCache = [];
         this.$store.commit('fetchTransactions', false);
@@ -287,13 +288,13 @@ export default {
       }
 
       this.filteredTransactions = filter(this.transactions, {
-        ...objectFilter
+        ...objectFilter,
       });
     },
 
     onCustomRangeApply(range) {
       const customRange = this.rangeOptions.find(
-        el => el.name === 'Custom Range'
+        (el) => el.name === 'Custom Range'
       );
       customRange.dateStart = range.start;
       customRange.dateEnd = range.end;
@@ -304,7 +305,9 @@ export default {
     onRangeSelect(selected) {
       this.selectRangeErrors = [];
       transactionsCache = [];
-      let range = this.rangeOptions.find(el => el.name === this.selectedRange);
+      let range = this.rangeOptions.find(
+        (el) => el.name === this.selectedRange
+      );
 
       localStorage.setItem('range', this.selectedRange);
       if (selected && this.selectedRange === 'Custom Range') {
@@ -318,12 +321,14 @@ export default {
       } catch (e) {
         alert(e);
       }
-    }
+    },
   },
 
   mounted() {
     /* Pre-fetch transactions data from the server */
-    const range = this.rangeOptions.find(el => el.name === this.selectedRange);
+    const range = this.rangeOptions.find(
+      (el) => el.name === this.selectedRange
+    );
     if (this.selectedRange === 'Custom Range') {
       range.dateStart = this.$refs.customRangePicker.customDateRange.start;
       range.dateEnd = this.$refs.customRangePicker.customDateRange.end;
@@ -337,6 +342,6 @@ export default {
 
   created() {
     document.title = this.$options.name + ' | ' + this.$documentTitle;
-  }
+  },
 };
 </script>

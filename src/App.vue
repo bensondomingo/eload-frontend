@@ -69,7 +69,7 @@ export default {
     onScroll() {
       const bottom =
         window.pageYOffset + window.innerHeight >=
-        document.documentElement.offsetHeight - 10;
+        document.documentElement.offsetHeight - 40;
 
       if (this.pageBottom != bottom) {
         this.pageBottom = bottom;

@@ -8,41 +8,10 @@
         :key="transaction.id"
       >
         <v-fab-transition>
-          <v-alert
-            class="mb-0"
-            :color="transaction.status === 'refunded' ? 'error' : 'success'"
-            :value="transaction.visible"
-            border="left"
-            transition="scale-transition"
-            outlined
-            dense
-          >
-            <div class="d-flex">
-              <!-- Number/Amount -->
-              <div>
-                <p class="heading-6 mb-0" v-text="transaction.title"></p>
-                <p class="caption mb-0" v-text="transaction.subtitle"></p>
-              </div>
-              <v-spacer></v-spacer>
-              <!-- Status/Date -->
-              <div class="d-flex flex-column align-end">
-                <v-btn
-                  @click="onShowDetail(transaction.id)"
-                  :color="
-                    transaction.status === 'refunded' ? 'error' : 'success'
-                  "
-                  small
-                  icon
-                >
-                  <v-icon v-if="transaction.status === 'success'"
-                    >mdi-checkbox-marked-circle</v-icon
-                  >
-                  <v-icon v-else>mdi-alert-circle-outline</v-icon>
-                </v-btn>
-                <p class="caption mb-0" v-text="transaction.date"></p>
-              </div>
-            </div>
-          </v-alert>
+          <TransactionItemComponent
+            :transactionItem="transaction"
+            @show-detail="onShowDetail"
+          />
         </v-fab-transition>
       </v-col>
     </v-row>
@@ -75,21 +44,22 @@
 <script>
 import { mapGetters } from 'vuex';
 import { TransactionItem } from '@/assets/scripts/utils.js';
+import TransactionItemComponent from '@/components/TheTransactionItem';
 const ITEM_INCREMENT = 5;
 
 export default {
   name: 'TransactionList',
-  components: {},
+  components: { TransactionItemComponent },
   props: {
     transactions: {
       required: true,
-      default: []
+      default: [],
     },
     pageBottom: {
       required: true,
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
 
   data: () => ({
@@ -99,7 +69,7 @@ export default {
     listed: [],
     lastItemListedIndex: 0,
     itemIncrement: ITEM_INCREMENT,
-    appendItemIndex: 0
+    appendItemIndex: 0,
   }),
 
   computed: {
@@ -114,10 +84,10 @@ export default {
     },
 
     transactionList() {
-      return this.transactions.map(el => {
+      return this.transactions.map((el) => {
         return new TransactionItem(el);
       });
-    }
+    },
   },
 
   watch: {
@@ -131,7 +101,7 @@ export default {
 
     pageBottom() {
       this.onShowList();
-    }
+    },
   },
 
   methods: {
@@ -150,13 +120,13 @@ export default {
     },
 
     onShowDetail(transactionId) {
-      const transaction = this.transactions.find(t => t.id === transactionId);
+      const transaction = this.transactions.find((t) => t.id === transactionId);
       // Basic details
       let details = [
         { name: 'Confirmation code', value: transaction.confirmation_code },
         { name: 'Amount', value: transaction.amount },
         { name: 'Posted amount', value: transaction.posted_amount },
-        { name: 'Status', value: transaction.status }
+        { name: 'Status', value: transaction.status },
       ];
 
       if (transaction.transaction_type == 'sellorder') {
@@ -168,7 +138,7 @@ export default {
         // Buy order
         details.push({
           name: 'Payment method',
-          value: transaction.payment_method
+          value: transaction.payment_method,
         });
       }
 
@@ -179,16 +149,16 @@ export default {
           0,
           {
             name: 'Rebates',
-            value: transaction.reward_amount
+            value: transaction.reward_amount,
           },
           {
             name: 'Running balance',
-            value: transaction.running_balance
+            value: transaction.running_balance,
           }
         );
         if (transaction.transaction_type === 'sellorder') {
           let retailer = this.retailers.find(
-            retailer => retailer.id == transaction.retailer
+            (retailer) => retailer.id == transaction.retailer
           );
           retailer = retailer
             ? retailer.user
@@ -201,7 +171,7 @@ export default {
 
       details.push({
         name: 'Date',
-        value: new Date(transaction.transaction_date).toLocaleString()
+        value: new Date(transaction.transaction_date).toLocaleString(),
       });
 
       this.details = details;
@@ -211,12 +181,12 @@ export default {
     onDetailClose() {
       this.showDetail = false;
       this.details = {};
-    }
+    },
   },
 
   mounted() {
     if (this.transactions.length) this.onShowList();
-  }
+  },
 };
 </script>
 
