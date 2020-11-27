@@ -10,6 +10,8 @@ import { mapGetters, mapMutations } from 'vuex';
 import NewTransactionForm from '@/components/forms/NewTransactionForm';
 import TransactionList from '@/components/TheTransactionList';
 
+const FETCH_LIMIT = 10;
+
 export default {
   name: 'Home',
   components: { TransactionList, NewTransactionForm },
@@ -66,7 +68,7 @@ export default {
   methods: {
     ...mapMutations(['CLEAR_NEW_TRANSACTION']),
 
-    fetchTransactions(queryParams = { limit: 10, offset: 0 }) {
+    fetchTransactions(queryParams = { limit: FETCH_LIMIT, offset: 0 }) {
       const endpoint = '/cphapp/api/transactions/';
       this.$http
         .get(endpoint, { params: queryParams })
@@ -78,8 +80,8 @@ export default {
     },
 
     onLoadMore() {
-      this.fetchTransactions({ limit: 10, offset: this.loadOffset });
-      this.loadOffset += 10;
+      this.fetchTransactions({ limit: FETCH_LIMIT, offset: this.loadOffset });
+      this.loadOffset += FETCH_LIMIT;
     },
 
     onShowActions() {},
@@ -97,7 +99,7 @@ export default {
     document.title = this.$options.name + ' | ' + this.$documentTitle;
     if (!this.transactions.length) {
       this.fetchTransactions();
-      this.loadOffset += 1;
+      this.loadOffset += FETCH_LIMIT;
       0;
     }
   },
